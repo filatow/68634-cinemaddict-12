@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Евгений Филатов](https://up.htmlacademy.ru/ecmascript/12/user/68634).
-* Наставник: [Евгений Фаллер] (https://htmlacademy.ru/profile/id505933).
+* Наставник: [Евгений Фаллер](https://htmlacademy.ru/profile/id505933).
 
 ---
 
