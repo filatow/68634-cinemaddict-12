@@ -1,5 +1,10 @@
 "use strict";
 
+const EXTRAFILMLIST_COUNTER = 2;
+const EXTRAFILMLIST_FILM_COUNTER = 2;
+const FILMLIST_FILM_COUNTER = 5;
+
+
 const createUserRankTemplate = () => {
   return(
     `<section class="header__profile profile">
@@ -270,3 +275,34 @@ const createFilmsAmountTemplate = () => {
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place,template);
 }
+
+const siteHeaderElement = document.querySelector(`.header`);
+render(siteHeaderElement, createUserRankTemplate(), `beforeend`);
+
+const siteMainElement = document.querySelector(`.main`);
+render(siteMainElement, createSiteMenuTemplate(), `beforeend`);
+render(siteMainElement, createSortingTemplate(), `beforeend`);
+render(siteMainElement, createFilmsTemplate(), `beforeend`);
+
+const filmsElement = siteMainElement.querySelector(`.films`);
+
+for (let i = 0; i < EXTRAFILMLIST_COUNTER; i++) {
+  render(filmsElement, createFilmsListExtraTemplate(), `afterbegin`);
+  const filmsListExtra = filmsElement.querySelector(`.films-list--extra`)
+  const filmsListExtraContainer = filmsListExtra.querySelector(`.films-list__container`);
+  for (let j = 0; j < EXTRAFILMLIST_FILM_COUNTER; j++) {
+    render(filmsListExtraContainer, createFilmCardTemplate(), `beforeend`);
+  }
+}
+
+render(filmsElement, createFilmsListTemplate(), `afterbegin`);
+const filmsList = filmsElement.querySelector(`.films-list`)
+const filmsListContainer = filmsList.querySelector(`.films-list__container`);
+for (let i = 0; i < FILMLIST_FILM_COUNTER; i++) {
+  render(filmsListContainer, createFilmCardTemplate(), `beforeend`);
+}
+
+const siteFooterElement = document.querySelector(`.footer`);
+const footerStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
+render(footerStatisticsElement, createFilmsAmountTemplate(), `beforeend`);
+render(siteFooterElement, createFilmDetailsTemplate(), `afterend`);
