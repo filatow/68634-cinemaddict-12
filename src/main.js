@@ -7,6 +7,7 @@ import {createShowMoreButtonTemplate} from "./view/show-more-button.js";
 import {createFilmsListExtraTemplate} from "./view/films-list-extra.js";
 import {createFilmCardTemplate} from "./view/film-card.js";
 import {createFilmDetailsTemplate} from "./view/film-details.js";
+import {generateFilm} from "./mock/film.js";
 
 const EXTRAFILMLIST_COUNTER = 2;
 const EXTRAFILMLIST_FILM_COUNTER = 2;
