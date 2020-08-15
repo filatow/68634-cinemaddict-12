@@ -1,5 +1,5 @@
 import {getRandomInteger} from "../utils.js";
-import {LOREM_IPSUM} from "../const.js";
+import {LOREM_IPSUM, FILM_GENRES} from "../const.js";
 
 const generateTitle = () => {
   const titles = [
@@ -14,7 +14,6 @@ const generateTitle = () => {
     `Хороший, плохой, злой`,
     `Апокалипсис сегодня`,
   ];
-
   return titles[getRandomInteger(0, titles.length - 1)];
 };
 
@@ -28,12 +27,11 @@ const generatePoster = () => {
     `the-great-flamarion.jpg`,
     `the-man-with-the-golden-arm.jpg`,
   ];
-
-  return `images/` + posters[getRandomInteger(0, posters.length - 1)];
+  return `images/posters/` + posters[getRandomInteger(0, posters.length - 1)];
 };
 
 const generateRating = () => {
-  return String((getRandomInteger(25, 50) / 10));
+  return String((getRandomInteger(40, 100) / 10));
 };
 
 const generateDuration = () => {
@@ -44,6 +42,17 @@ const generateDuration = () => {
       ? wholeHours + `h ` + (durationInMinutes - (wholeHours * 60)) + `m`
       : durationInMinutes + `m`
   );
+};
+
+const generateGenres = () => {
+  let genres = [];
+  for (let i = 0; i < getRandomInteger(1, 3); i++) {
+    const genre = FILM_GENRES[getRandomInteger(0, FILM_GENRES.length - 1)];
+    if (!genres.includes(genre)) {
+      genres.push(genre);
+    }
+  }
+  return genres;
 };
 
 const generateDescription = () => {
@@ -78,6 +87,7 @@ export const generateFilm = () => {
     productionYear,
     raiting: generateRating(),
     duration: generateDuration(),
+    genres: generateGenres(),
     description: generateDescription(),
     comments: generateComments(),
     isWatchlisted: Boolean(getRandomInteger(0, 1)),
