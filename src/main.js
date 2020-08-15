@@ -65,4 +65,4 @@ for (let i = 0; i < FILMLIST_FILM_COUNTER; i++) {
 const siteFooterElement = document.querySelector(`.footer`);
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, createFilmsAmountTemplate(), `beforeend`);
-// render(siteFooterElement, createFilmDetailsTemplate(), `afterend`);
+render(siteFooterElement, createFilmDetailsTemplate(films[0]), `afterend`);

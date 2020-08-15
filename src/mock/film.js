@@ -3,16 +3,16 @@ import {LOREM_IPSUM, FILM_GENRES} from "../const.js";
 
 const generateTitle = () => {
   const titles = [
-    `Под водой`,
-    `Достать ножи`,
-    `Платформа`,
-    `Нечто`,
-    `Печальная баллада для трубы`,
-    `Джентльмены`,
-    `Джуманджи`,
-    `Начало`,
-    `Хороший, плохой, злой`,
-    `Апокалипсис сегодня`,
+    `Underwater`,
+    `Knives Out`,
+    `El hoyo`,
+    `The Thing`,
+    `Balada triste de trompeta`,
+    `The Gentlemen`,
+    `Jumanji`,
+    `Inception`,
+    `Il buono, il brutto, il cattivo`,
+    `Apocalypse Now`,
   ];
   return titles[getRandomInteger(0, titles.length - 1)];
 };

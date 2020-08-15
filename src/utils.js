@@ -4,3 +4,7 @@ export const getRandomInteger = (a = 0, b = 1) => {
 
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
+
+export const humanizeTaskDueDate = (dueDate) => {
+  return dueDate.toLocaleString(`en-GB`, {day: `2-digit`, month: `long`, year: `numeric`});
+};
