@@ -1,5 +1,6 @@
 import {getRandomInteger} from "../utils.js";
 import {LOREM_IPSUM, FILM_GENRES} from "../const.js";
+import {comment} from "./comment.js";
 
 const generateTitle = () => {
   const titles = [
@@ -164,7 +165,7 @@ const generateAgeLimitation = () => {
 };
 
 const generateComments = () => {
-  return [];
+  return new Array(getRandomInteger(1, 5)).fill().map(comment);
 };
 
 const generateReleaseDate = () => {
