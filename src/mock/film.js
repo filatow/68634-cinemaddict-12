@@ -74,21 +74,123 @@ const generateDescription = () => {
   });
 };
 
+const generateDirector = () => {
+  const directors = [
+    `Christopher Nolan`,
+    `Joe Johnston`,
+    `John Carpenter`,
+    `Rian Johnson`,
+    `Francis Ford Coppola`,
+    `Guy Ritchie`,
+    `William Eubank`,
+    `Sergio Leone`,
+    `Álex de la Iglesia`,
+  ];
+  return directors[getRandomInteger(0, directors.length)];
+};
+
+const generateWriters = () => {
+  const allWriters = [
+    `Christopher Nolan`,
+    `Bill Lancaster`,
+    `John W. Campbell Jr.`,
+    `Luciano Vincenzoni`,
+    `Sergio Leone`,
+    `Agenore Incrocci`,
+    `John Milius`,
+    `Francis Ford Coppola`,
+    `Michael Herr`,
+    `Greg Taylor`,
+    `Jim Strain`,
+    `Chris Van Allsburg`,
+  ];
+  let writers = [];
+  for (let i = 0; i < getRandomInteger(1, 3); i++) {
+    const writer = allWriters[getRandomInteger(0, allWriters.length - 1)];
+    if (!writers.includes(writer)) {
+      writers.push(writer);
+    }
+  }
+  return writers;
+};
+
+const generateActors = () => {
+  const allActors = [
+    `Leonardo DiCaprio`,
+    `Joseph Gordon-Levitt`,
+    `Ellen Page`,
+    `Tom Hardy`,
+    `Robin Williams`,
+    `Clint Eastwood`,
+    `Lee Van Cleef`,
+    `Eli Wallach`,
+    `Kristen Stewart`,
+    `Vincent Cassel`,
+    `Kurt Russell`,
+    `Hugh Grant`,
+    `Matthew McConaughey`,
+    `Charlie Hunnam`,
+  ];
+  let actors = [];
+  for (let i = 0; i < getRandomInteger(3, 5); i++) {
+    const actor = allActors[getRandomInteger(0, allActors.length - 1)];
+    if (!actors.includes(actor)) {
+      actors.push(actor);
+    }
+  }
+  return actors;
+};
+
+const generateCountry = () => {
+  const countries = [
+    `USA`,
+    `Great Britain`,
+    `Italy`,
+    `France`,
+    `Germany`,
+  ];
+  return countries[getRandomInteger(0, countries.length - 1)];
+};
+
+const generateAgeLimitation = () => {
+  const ageLimitatins = [
+    `0+`,
+    `6+`,
+    `12+`,
+    `16+`,
+    `18+`,
+  ];
+  return ageLimitatins[getRandomInteger(0, ageLimitatins.length - 1)];
+};
+
 const generateComments = () => {
   return [];
 };
 
+const generateReleaseDate = () => {
+  let fromDate = new Date();
+  fromDate.setFullYear(1980, 0, 1);
+  fromDate.setHours(0, 0, 0, 0);
+
+  let currentDate = new Date();
+  return new Date(getRandomInteger(fromDate.getTime(), currentDate.getTime()));
+};
+
 export const generateFilm = () => {
-  const productionYear = String(getRandomInteger(1979, 2020));
 
   return {
     title: generateTitle(),
     poster: generatePoster(),
-    productionYear,
+    releaseDate: generateReleaseDate(),
     raiting: generateRating(),
     duration: generateDuration(),
     genres: generateGenres(),
     description: generateDescription(),
+    director: generateDirector(),
+    writers: generateWriters(),
+    actors: generateActors(),
+    country: generateCountry(),
+    ageLimitation: generateAgeLimitation(),
     comments: generateComments(),
     isWatchlisted: Boolean(getRandomInteger(0, 1)),
     isWatched: Boolean(getRandomInteger(0, 1)),
