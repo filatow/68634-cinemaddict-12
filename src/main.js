@@ -10,8 +10,9 @@ import {createFilmCardTemplate} from "./view/film-card.js";
 import {createFilmDetailsTemplate} from "./view/film-details.js";
 import {generateFilm} from "./mock/film.js";
 
-const FILMLIST_FILM_COUNTER = 5;
+const FILMLIST_FILM_COUNTER = 11;
 const EXTRAFILMLIST_FILM_COUNTER = 2;
+const FILM_COUNT_PER_STEP = 5;
 
 const films = new Array(FILMLIST_FILM_COUNTER).fill().map(generateFilm);
 const filmsTopRated = new Array(EXTRAFILMLIST_FILM_COUNTER).fill().map(generateFilm);
@@ -55,14 +56,35 @@ for (let i = 0; i < EXTRAFILMLIST_FILM_COUNTER; i++) {
 render(filmsElement, createFilmsListTemplate(), `afterbegin`);
 
 const filmsList = filmsElement.querySelector(`.films-list`);
-render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
-
 const filmsListContainer = filmsList.querySelector(`.films-list__container`);
-for (let i = 0; i < FILMLIST_FILM_COUNTER; i++) {
+
+for (let i = 0; i < Math.min(FILM_COUNT_PER_STEP, films.length); i++) {
   render(filmsListContainer, createFilmCardTemplate(films[i]), `beforeend`);
 }
+
+
+if (films.length > FILM_COUNT_PER_STEP) {
+  let renderedFilmCount = FILM_COUNT_PER_STEP;
+
+  render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
+  const showMoreButton = document.querySelector(`.films-list__show-more`);
+
+  showMoreButton.addEventListener(`click`, (event) => {
+    event.preventDefault();
+
+    films
+      .slice(renderedFilmCount, renderedFilmCount + FILM_COUNT_PER_STEP)
+      .forEach((film) => render(filmsListContainer, createFilmCardTemplate(film), `beforeend`));
+
+    renderedFilmCount += FILM_COUNT_PER_STEP;
+    if (renderedFilmCount > films.length) {
+      showMoreButton.remove();
+    }
+  });
+}
+
 
 const siteFooterElement = document.querySelector(`.footer`);
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
 render(footerStatisticsElement, createFilmsAmountTemplate(), `beforeend`);
-render(siteFooterElement, createFilmDetailsTemplate(films[0]), `afterend`);
+// render(siteFooterElement, createFilmDetailsTemplate(films[0]), `afterend`);
