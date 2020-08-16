@@ -9,12 +9,14 @@ import {createFilmsListMostCommentedTemplate} from "./view/films-list-most-comme
 import {createFilmCardTemplate} from "./view/film-card.js";
 import {createFilmDetailsTemplate} from "./view/film-details.js";
 import {generateFilm} from "./mock/film.js";
+import {generateFilter} from "./mock/filter.js";
 
-const FILMLIST_FILM_COUNTER = 11;
+const FILMLIST_FILM_COUNTER = 17;
 const EXTRAFILMLIST_FILM_COUNTER = 2;
 const FILM_COUNT_PER_STEP = 5;
 
 const films = new Array(FILMLIST_FILM_COUNTER).fill().map(generateFilm);
+const filters = generateFilter(films);
 const filmsTopRated = new Array(EXTRAFILMLIST_FILM_COUNTER).fill().map(generateFilm);
 const filmsMostCommented = new Array(EXTRAFILMLIST_FILM_COUNTER).fill().map(generateFilm);
 
@@ -33,7 +35,7 @@ const siteHeaderElement = document.querySelector(`.header`);
 render(siteHeaderElement, createUserRankTemplate(), `beforeend`);
 
 const siteMainElement = document.querySelector(`.main`);
-render(siteMainElement, createSiteMenuTemplate(), `beforeend`);
+render(siteMainElement, createSiteMenuTemplate(filters), `beforeend`);
 render(siteMainElement, createSortingTemplate(), `beforeend`);
 render(siteMainElement, createFilmsTemplate(), `beforeend`);
 
