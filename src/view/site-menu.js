@@ -1,3 +1,5 @@
+import {createElement} from "../utils";
+
 const createFilterTemplate = (filter, index) => {
   const {name, count} = filter;
   const label = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -7,7 +9,7 @@ const createFilterTemplate = (filter, index) => {
     : `<a href="#${name}" class="main-navigation__item main-navigation__item--active">All movies</a>`;
 };
 
-export const createSiteMenuTemplate = (filters) => {
+const createSiteMenuTemplate = (filters) => {
 
   const filtersTemplate = filters
     .map((filter, index) => createFilterTemplate(filter, index))
@@ -22,3 +24,25 @@ export const createSiteMenuTemplate = (filters) => {
   </nav>`
   );
 };
+
+export default class SiteMenu {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  _getTemplate() {
+    return createSiteMenuTemplate(this._filters);
+  }
+
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

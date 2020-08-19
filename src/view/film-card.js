@@ -7,9 +7,10 @@ export const createFilmCardTemplate = (film) => {
   const commentsInfo = comments.length !== 1
     ? comments.length + ` comments`
     : comments.length + ` comment`;
-  const descriptionShortened = description.length > 140
-    ? description.slice(0, 140) + `...`
-    : description;
+  const descriptionString = description.join(``).trimRight();
+  const descriptionShortened = descriptionString.length > 140
+    ? descriptionString.slice(0, 140) + `...`
+    : descriptionString;
   const watchlistClassName = isWatchlisted
     ? `film-card__controls-item--active`
     : ``;
