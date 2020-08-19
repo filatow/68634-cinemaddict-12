@@ -3,7 +3,7 @@ import SiteMenuView from "./view/site-menu";
 import SortingView from "./view/sorting";
 import {createFilmsTemplate} from "./view/films";
 import {createFilmsListTemplate} from "./view/films-list";
-import {createShowMoreButtonTemplate} from "./view/show-more-button";
+import ShowMoreButtonView from "./view/show-more-button";
 import {createFilmsListTopRatedTemplate} from "./view/films-list-top-rated";
 import {createFilmsListMostCommentedTemplate} from "./view/films-list-most-commented";
 import {createFilmCardTemplate} from "./view/film-card";
@@ -58,10 +58,10 @@ for (let i = 0; i < Math.min(enumerate.FILM_COUNT_PER_STEP, films.length); i++) 
 if (films.length > enumerate.FILM_COUNT_PER_STEP) {
   let renderedFilmCount = enumerate.FILM_COUNT_PER_STEP;
 
-  renderTemplate(filmsList, createShowMoreButtonTemplate(), `beforeend`);
-  const showMoreButton = document.querySelector(`.films-list__show-more`);
+  const showMoreButtonComponent = new ShowMoreButtonView();
+  renderElement(filmsList, showMoreButtonComponent.element, RenderPosition.BEFOREEND);
 
-  showMoreButton.addEventListener(`click`, (event) => {
+  showMoreButtonComponent.element.addEventListener(`click`, (event) => {
     event.preventDefault();
 
     films
@@ -70,7 +70,8 @@ if (films.length > enumerate.FILM_COUNT_PER_STEP) {
 
     renderedFilmCount += enumerate.FILM_COUNT_PER_STEP;
     if (renderedFilmCount > films.length) {
-      showMoreButton.remove();
+      showMoreButtonComponent.element.remove();
+      showMoreButtonComponent.removeElement();
     }
   });
 }
