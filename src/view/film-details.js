@@ -1,6 +1,6 @@
-import {humanizeFilmReleaseDate, humanizeCommentPostDate} from "../utils.js";
+import {createElement, humanizeFilmReleaseDate, humanizeCommentPostDate} from "../utils.js";
 
-export const createFilmDetailsTemplate = (film) => {
+const createFilmDetailsTemplate = (film) => {
   const {
     title, poster, releaseDate,
     raiting, duration, description,
@@ -9,6 +9,7 @@ export const createFilmDetailsTemplate = (film) => {
     ageLimitation, isWatchlisted, isWatched,
     isFavorite} = film;
 
+  const filmDescription = description.join(``);
   const filmReleaseDate = humanizeFilmReleaseDate(releaseDate);
   const filmGenres = genres
     .map((genre) => `<span class="film-details__genre">${genre}</span>`)
@@ -111,7 +112,7 @@ export const createFilmDetailsTemplate = (film) => {
             </table>
 
             <p class="film-details__film-description">
-            ${description}
+            ${filmDescription}
             </p>
           </div>
         </div>
@@ -171,3 +172,25 @@ export const createFilmDetailsTemplate = (film) => {
   </section>`
   );
 };
+
+export default class FilmsDertails {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  _getTemplate() {
+    return createFilmDetailsTemplate(this._film);
+  }
+
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
