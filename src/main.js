@@ -1,11 +1,11 @@
 import UserRankView from "./view/user-rank";
 import SiteMenuView from "./view/site-menu";
 import SortingView from "./view/sorting";
-import {createFilmsTemplate} from "./view/films";
-import {createFilmsListTemplate} from "./view/films-list";
+import FilmsSectionView from "./view/films-section";
+import FilmsListView from "./view/films-list";
 import ShowMoreButtonView from "./view/show-more-button";
-import {createFilmsListTopRatedTemplate} from "./view/films-list-top-rated";
-import {createFilmsListMostCommentedTemplate} from "./view/films-list-most-commented";
+import FilmsListMostCommentedView from "./view/films-list-most-commented";
+import FilmsListTopRatedView from "./view/films-list-top-rated";
 import {createFilmCardTemplate} from "./view/film-card";
 import {createFilmsAmountTemplate} from "./view/films-amount";
 import {createFilmDetailsTemplate} from "./view/film-details";
@@ -27,29 +27,26 @@ renderElement(siteHeaderElement, new UserRankView().element, RenderPosition.BEFO
 const siteMainElement = document.querySelector(`.main`);
 renderElement(siteMainElement, new SiteMenuView(filters).element, RenderPosition.BEFOREEND);
 renderElement(siteMainElement, new SortingView().element, RenderPosition.BEFOREEND);
-renderTemplate(siteMainElement, createFilmsTemplate(), `beforeend`);
+const filmsSectionComponent = new FilmsSectionView();
+renderElement(siteMainElement, filmsSectionComponent.element, RenderPosition.BEFOREEND);
 
-const filmsElement = siteMainElement.querySelector(`.films`);
-
-renderTemplate(filmsElement, createFilmsListMostCommentedTemplate(), `afterbegin`);
-const filmsListMostCommented = filmsElement.querySelector(`.films-list--extra`);
-const filmsListMostCommentedContainer = filmsListMostCommented.querySelector(`.films-list__container`);
+const filmsListMostCommentedComponent = new FilmsListMostCommentedView();
+renderElement(filmsSectionComponent.element, filmsListMostCommentedComponent.element, RenderPosition.AFTERBEGIN);
+const filmsListMostCommentedContainer = filmsListMostCommentedComponent.element.querySelector(`.films-list__container`);
 for (let i = 0; i < enumerate.EXTRAFILMLIST_FILM_COUNTER; i++) {
   renderTemplate(filmsListMostCommentedContainer, createFilmCardTemplate(filmsMostCommented[i]), `beforeend`);
 }
 
-renderTemplate(filmsElement, createFilmsListTopRatedTemplate(), `afterbegin`);
-const filmsListTopRated = filmsElement.querySelector(`.films-list--extra`);
-const filmsListTopRatedContainer = filmsListTopRated.querySelector(`.films-list__container`);
+const FilmsListTopRatedComponent = new FilmsListTopRatedView();
+renderElement(filmsSectionComponent.element, FilmsListTopRatedComponent.element, RenderPosition.AFTERBEGIN);
+const filmsListTopRatedContainer = FilmsListTopRatedComponent.element.querySelector(`.films-list__container`);
 for (let i = 0; i < enumerate.EXTRAFILMLIST_FILM_COUNTER; i++) {
   renderTemplate(filmsListTopRatedContainer, createFilmCardTemplate(filmsTopRated[i]), `beforeend`);
 }
 
-renderTemplate(filmsElement, createFilmsListTemplate(), `afterbegin`);
-
-const filmsList = filmsElement.querySelector(`.films-list`);
-const filmsListContainer = filmsList.querySelector(`.films-list__container`);
-
+const FilmsListComponent = new FilmsListView();
+renderElement(filmsSectionComponent.element, FilmsListComponent.element, RenderPosition.AFTERBEGIN);
+const filmsListContainer = FilmsListComponent.element.querySelector(`.films-list__container`);
 for (let i = 0; i < Math.min(enumerate.FILM_COUNT_PER_STEP, films.length); i++) {
   renderTemplate(filmsListContainer, createFilmCardTemplate(films[i]), `beforeend`);
 }
@@ -59,7 +56,7 @@ if (films.length > enumerate.FILM_COUNT_PER_STEP) {
   let renderedFilmCount = enumerate.FILM_COUNT_PER_STEP;
 
   const showMoreButtonComponent = new ShowMoreButtonView();
-  renderElement(filmsList, showMoreButtonComponent.element, RenderPosition.BEFOREEND);
+  renderElement(FilmsListComponent.element, showMoreButtonComponent.element, RenderPosition.BEFOREEND);
 
   showMoreButtonComponent.element.addEventListener(`click`, (event) => {
     event.preventDefault();
