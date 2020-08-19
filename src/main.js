@@ -1,6 +1,5 @@
-import {createUserRankTemplate} from "./view/user-rank";
+import UserRankView from "./view/user-rank";
 import SiteMenuView from "./view/site-menu";
-// import {createSiteMenuTemplate} from "./view/site-menu";
 import {createSortingTemplate} from "./view/sorting";
 import {createFilmsTemplate} from "./view/films";
 import {createFilmsListTemplate} from "./view/films-list";
@@ -23,7 +22,7 @@ const filmsMostCommented = new Array(enumerate.EXTRAFILMLIST_FILM_COUNTER).fill(
 
 
 const siteHeaderElement = document.querySelector(`.header`);
-renderTemplate(siteHeaderElement, createUserRankTemplate(), `beforeend`);
+renderElement(siteHeaderElement, new UserRankView().element, RenderPosition.BEFOREEND);
 
 const siteMainElement = document.querySelector(`.main`);
 renderElement(siteMainElement, new SiteMenuView(filters).element, RenderPosition.BEFOREEND);
