@@ -8,8 +8,8 @@ import ShowMoreButtonView from "./view/show-more-button";
 import FilmsListMostCommentedView from "./view/films-list-most-commented";
 import FilmsListTopRatedView from "./view/films-list-top-rated";
 import {createFilmCardTemplate} from "./view/film-card";
-import {createFilmsAmountTemplate} from "./view/films-amount";
 import {createFilmDetailsTemplate} from "./view/film-details";
+import FilmsAmountView from "./view/films-amount";
 import {generateFilm} from "./mock/film";
 import {generateFilter} from "./mock/filter";
 import {enumerate} from "./consts";
@@ -81,5 +81,5 @@ if (films.length > enumerate.FILM_COUNT_PER_STEP) {
 
 const siteFooterElement = document.querySelector(`.footer`);
 const footerStatisticsElement = siteFooterElement.querySelector(`.footer__statistics`);
-renderTemplate(footerStatisticsElement, createFilmsAmountTemplate(), `beforeend`);
+renderElement(footerStatisticsElement, new FilmsAmountView().element, RenderPosition.BEFOREEND);
 // render(siteFooterElement, createFilmDetailsTemplate(films[0]), `afterend`);
