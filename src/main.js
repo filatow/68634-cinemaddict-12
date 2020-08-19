@@ -1,6 +1,6 @@
 import UserRankView from "./view/user-rank";
 import SiteMenuView from "./view/site-menu";
-import {createSortingTemplate} from "./view/sorting";
+import SortingView from "./view/sorting";
 import {createFilmsTemplate} from "./view/films";
 import {createFilmsListTemplate} from "./view/films-list";
 import {createShowMoreButtonTemplate} from "./view/show-more-button";
@@ -26,7 +26,7 @@ renderElement(siteHeaderElement, new UserRankView().element, RenderPosition.BEFO
 
 const siteMainElement = document.querySelector(`.main`);
 renderElement(siteMainElement, new SiteMenuView(filters).element, RenderPosition.BEFOREEND);
-renderTemplate(siteMainElement, createSortingTemplate(), `beforeend`);
+renderElement(siteMainElement, new SortingView().element, RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createFilmsTemplate(), `beforeend`);
 
 const filmsElement = siteMainElement.querySelector(`.films`);

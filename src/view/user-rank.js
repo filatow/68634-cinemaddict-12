@@ -1,4 +1,4 @@
-import {createElement, renderElement} from "../utils";
+import {createElement} from "../utils";
 
 const createUserRankTemplate = () => {
   return (
