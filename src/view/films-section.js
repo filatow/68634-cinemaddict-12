@@ -1,20 +1,18 @@
 import {createElement} from "../utils";
 
-const createFilmsListTopRatedTemplate = () => {
+const createFilmsSectionTemplate = () => {
   return (
-    `<section class="films-list--extra">
-    <h2 class="films-list__title">Top rated</h2>
-  </section>`
+    `<section class="films"></section>`
   );
 };
 
-export default class FilmsListTopRated {
+export default class FilmsSection {
   constructor() {
     this._element = null;
   }
 
   _getTemplate() {
-    return createFilmsListTopRatedTemplate();
+    return createFilmsSectionTemplate();
   }
 
   get element() {

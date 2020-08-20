@@ -1,6 +1,6 @@
-import {getRandomInteger} from "../utils.js";
-import {LOREM_IPSUM, FILM_GENRES} from "../const.js";
-import {comment} from "./comment.js";
+import {getRandomInteger} from "../utils";
+import {LOREM_IPSUM, FILM_GENRES} from "../consts";
+import {generateComment} from "./comment";
 
 const generateTitle = () => {
   const titles = [
@@ -57,22 +57,12 @@ const generateGenres = () => {
 };
 
 const generateDescription = () => {
-  let descriptionPatterns = LOREM_IPSUM.split(`.`);
-  descriptionPatterns = descriptionPatterns
-    .map((element) => element.trim())
-    .filter((element) => Boolean(element));
+  const descriptionPatterns = LOREM_IPSUM.split(`.`).filter(Boolean).map((str) => `${str}. `);
+  const descriptionPatternsLastIndex = descriptionPatterns.length - 1;
 
-  let descriptionPhrases = [];
-  const phrasesCount = getRandomInteger(1, 5);
-  for (let i = 0; i < phrasesCount; i++) {
-    descriptionPhrases.push(descriptionPatterns[getRandomInteger(0, descriptionPatterns.length - 1)]);
-  }
-
-  return descriptionPhrases.reduce((description, phrase, phraseIndex) => {
-    return phraseIndex !== phrasesCount - 1
-      ? description + `. ` + phrase
-      : description + `. ` + phrase + `.`;
-  });
+  return new Array(getRandomInteger(1, 5)).fill()
+    .map(() => descriptionPatterns[getRandomInteger(0, descriptionPatternsLastIndex)]);
+  // .join(``).trimRight();
 };
 
 const generateDirector = () => {
@@ -165,7 +155,7 @@ const generateAgeLimitation = () => {
 };
 
 const generateComments = () => {
-  return new Array(getRandomInteger(1, 5)).fill().map(comment);
+  return new Array(getRandomInteger(1, 5)).fill().map(generateComment);
 };
 
 const generateReleaseDate = () => {

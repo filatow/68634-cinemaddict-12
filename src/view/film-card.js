@@ -1,4 +1,6 @@
-export const createFilmCardTemplate = (film) => {
+import {createElement} from "../utils";
+
+const createFilmCardTemplate = (film) => {
   const {
     title, poster, releaseDate,
     raiting, duration, description,
@@ -7,9 +9,10 @@ export const createFilmCardTemplate = (film) => {
   const commentsInfo = comments.length !== 1
     ? comments.length + ` comments`
     : comments.length + ` comment`;
-  const descriptionShortened = description.length > 140
-    ? description.slice(0, 140) + `...`
-    : description;
+  const descriptionString = description.join(``).trimRight();
+  const descriptionShortened = descriptionString.length > 140
+    ? descriptionString.slice(0, 140) + `...`
+    : descriptionString;
   const watchlistClassName = isWatchlisted
     ? `film-card__controls-item--active`
     : ``;
@@ -40,3 +43,25 @@ export const createFilmCardTemplate = (film) => {
   </article>`
   );
 };
+
+export default class FilmsCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  _getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  get element() {
+    if (!this._element) {
+      this._element = createElement(this._getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,4 +1,4 @@
-import {getRandomInteger} from "../utils.js";
+import {getRandomInteger} from "../utils";
 
 const generateEmoji = () => {
   const emojiSources = [
@@ -48,7 +48,7 @@ const generateDate = () => {
   return new Date(getRandomInteger(fromDate.getTime(), currentDate.getTime()));
 };
 
-export const comment = () => {
+export const generateComment = () => {
   return {
     emoji: generateEmoji(),
     date: generateDate(),
