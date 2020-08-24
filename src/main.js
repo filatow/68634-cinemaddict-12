@@ -12,14 +12,14 @@ import FilmsDetailsView from "./view/film-details";
 import FilmsAmountView from "./view/films-amount";
 import {generateFilm} from "./mock/film";
 import {generateFilter} from "./mock/filter";
-import {enumerate} from "./consts";
+import {FilmCounters as FilmCounter} from "./consts";
 import {renderElement as render, RenderPosition} from "./utils";
 
 
-const films = new Array(enumerate.FILMLIST_FILM_COUNTER).fill().map(generateFilm);
+const films = new Array(FilmCounter.FOR_FILMLIST).fill().map(generateFilm);
 const filters = generateFilter(films);
-const filmsTopRated = new Array(enumerate.EXTRAFILMLIST_FILM_COUNTER).fill().map(generateFilm);
-const filmsMostCommented = new Array(enumerate.EXTRAFILMLIST_FILM_COUNTER).fill().map(generateFilm);
+const filmsTopRated = new Array(FilmCounter.FOR_EXTRAFILMLIST).fill().map(generateFilm);
+const filmsMostCommented = new Array(FilmCounter.FOR_EXTRAFILMLIST).fill().map(generateFilm);
 
 
 const siteHeaderElement = document.querySelector(`.header`);
@@ -33,10 +33,19 @@ const renderFilmCard = (filmListContainer, film) => {
 
   const showFilmDetailsPopup = () => {
     siteFooterElement.appendChild(filmDetailsComponent.element);
+    document.addEventListener(`keydown`, onEscKeyDown);
   };
 
   const hideFilmDetailsPopup = () => {
     siteFooterElement.removeChild(filmDetailsComponent.element);
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  };
+
+  const onEscKeyDown = (event) => {
+    if (event.key === `Escape` || event.key === `Esc`) {
+      event.preventDefault();
+      hideFilmDetailsPopup();
+    }
   };
 
   filmCardComponent.element.querySelectorAll(`.film-card__poster, .film-card__title, .film-card__comments`)
@@ -65,7 +74,7 @@ const filmsListMostCommentedComponent = new FilmsListMostCommentedView();
 render(filmsSectionComponent.element, filmsListMostCommentedComponent.element, RenderPosition.AFTERBEGIN);
 let FilmsListContainerComponent = new FilmsListContainerView();
 render(filmsListMostCommentedComponent.element, FilmsListContainerComponent.element, RenderPosition.BEFOREEND);
-for (let i = 0; i < enumerate.EXTRAFILMLIST_FILM_COUNTER; i++) {
+for (let i = 0; i < FilmCounter.FOR_EXTRAFILMLIST; i++) {
   renderFilmCard(FilmsListContainerComponent.element, filmsMostCommented[i]);
 }
 
@@ -73,7 +82,7 @@ const FilmsListTopRatedComponent = new FilmsListTopRatedView();
 render(filmsSectionComponent.element, FilmsListTopRatedComponent.element, RenderPosition.AFTERBEGIN);
 FilmsListContainerComponent = new FilmsListContainerView();
 render(FilmsListTopRatedComponent.element, FilmsListContainerComponent.element, RenderPosition.BEFOREEND);
-for (let i = 0; i < enumerate.EXTRAFILMLIST_FILM_COUNTER; i++) {
+for (let i = 0; i < FilmCounter.FOR_EXTRAFILMLIST; i++) {
   renderFilmCard(FilmsListContainerComponent.element, filmsTopRated[i]);
 }
 
@@ -81,13 +90,13 @@ const FilmsListComponent = new FilmsListView();
 render(filmsSectionComponent.element, FilmsListComponent.element, RenderPosition.AFTERBEGIN);
 FilmsListContainerComponent = new FilmsListContainerView();
 render(FilmsListComponent.element, FilmsListContainerComponent.element, RenderPosition.AFTERBEGIN);
-for (let i = 0; i < Math.min(enumerate.FILM_COUNT_PER_STEP, films.length); i++) {
+for (let i = 0; i < Math.min(FilmCounter.PER_STEP, films.length); i++) {
   renderFilmCard(FilmsListContainerComponent.element, films[i]);
 }
 
 
-if (films.length > enumerate.FILM_COUNT_PER_STEP) {
-  let renderedFilmCount = enumerate.FILM_COUNT_PER_STEP;
+if (films.length > FilmCounter.PER_STEP) {
+  let renderedFilmCount = FilmCounter.PER_STEP;
 
   const showMoreButtonComponent = new ShowMoreButtonView();
   render(FilmsListComponent.element, showMoreButtonComponent.element, RenderPosition.BEFOREEND);
@@ -96,10 +105,10 @@ if (films.length > enumerate.FILM_COUNT_PER_STEP) {
     event.preventDefault();
 
     films
-      .slice(renderedFilmCount, renderedFilmCount + enumerate.FILM_COUNT_PER_STEP)
+      .slice(renderedFilmCount, renderedFilmCount + FilmCounter.PER_STEP)
       .forEach((film) => renderFilmCard(FilmsListContainerComponent.element, film));
 
-    renderedFilmCount += enumerate.FILM_COUNT_PER_STEP;
+    renderedFilmCount += FilmCounter.PER_STEP;
     if (renderedFilmCount > films.length) {
       showMoreButtonComponent.element.remove();
       showMoreButtonComponent.removeElement();
