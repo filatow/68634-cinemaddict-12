@@ -1,5 +1,5 @@
-export const FilmCounters = {
-  FOR_FILMLIST: 17,
+export const FilmCount = {
+  FOR_FILMLIST: 2,
   FOR_EXTRAFILMLIST: 2,
   PER_STEP: 5,
 };
