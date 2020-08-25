@@ -14,8 +14,8 @@ import FilmsAmountView from "./view/films-amount";
 import {generateFilm} from "./mock/film";
 import {generateFilter} from "./mock/filter";
 import {FilmCount} from "./consts";
-import {renderElement as render, RenderPosition,
-  getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "./utils";
+import {render, RenderPosition} from "./utils/render";
+import {getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "./utils/films";
 
 
 const films = new Array(FilmCount.FOR_FILMLIST).fill().map(generateFilm);

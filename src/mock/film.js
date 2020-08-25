@@ -1,4 +1,4 @@
-import {getRandomInteger} from "../utils";
+import {getRandomInteger} from "../utils/common";
 import {LOREM_IPSUM, FILM_GENRES} from "../consts";
 import {generateComment} from "./comment";
 

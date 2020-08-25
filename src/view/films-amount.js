@@ -1,5 +1,5 @@
 import AbstractView from "./abstract";
-import {getRandomInteger} from "../utils";
+import {getRandomInteger} from "../utils/common";
 
 let filmsAmount = getRandomInteger(50000, 200000);
 filmsAmount = `${Math.floor(filmsAmount / 1000)} ${Math.floor(filmsAmount % 1000)}`;
