@@ -1,4 +1,5 @@
-import {getRandomInteger, createElement} from "../utils";
+import AbstractView from "./abstract";
+import {getRandomInteger} from "../utils";
 
 let filmsAmount = getRandomInteger(50000, 200000);
 filmsAmount = `${Math.floor(filmsAmount / 1000)} ${Math.floor(filmsAmount % 1000)}`;
@@ -9,23 +10,8 @@ const createFilmsAmountTemplate = () => {
   );
 };
 
-export default class FilmsAmount {
-  constructor() {
-    this._element = null;
-  }
-
+export default class FilmsAmount extends AbstractView {
   _getTemplate() {
     return createFilmsAmountTemplate();
-  }
-
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
