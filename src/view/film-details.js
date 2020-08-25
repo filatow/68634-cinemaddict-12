@@ -178,9 +178,21 @@ export default class FilmsDertails extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
+
+    this._closeDetailsClickHandler = this._closeDetailsClickHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilmDetailsTemplate(this._film);
+  }
+
+  _closeDetailsClickHandler(event) {
+    event.preventDefault();
+    this._callback.closeDetailsClick();
+  }
+
+  setCloseDetailsClickHandler(callback) {
+    this._callback.closeDetailsClick = callback;
+    this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeDetailsClickHandler);
   }
 }

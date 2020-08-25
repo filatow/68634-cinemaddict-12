@@ -1,5 +1,5 @@
 export const FilmCount = {
-  FOR_FILMLIST: 10,
+  FOR_FILMLIST: 12,
   FOR_EXTRAFILMLIST: 2,
   PER_STEP: 5,
 };
