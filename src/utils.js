@@ -44,3 +44,11 @@ export const humanizeCommentPostDate = (dueDate) => {
 
   return `${year}/${month}/${date} ${hours}:${minutes}`;
 };
+
+export const getFilmsSortedByRating = (films) => {
+  return films.slice().sort((a, b) => Number(b.raiting) - Number(a.raiting));
+};
+
+export const getFilmsSortedByCommentsAmount = (films) => {
+  return films.slice().sort((a, b) => b.comments.length - a.comments.length);
+};
