@@ -10,6 +10,7 @@ import ShowMoreButtonView from "../view/show-more-button";
 import FilmCardView from "../view/film-card";
 import FilmsDetailsView from "../view/film-details";
 import {render, RenderPosition} from "../utils/render";
+import {isEscKeyPressed} from "../utils/common";
 import {getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "../utils/films";
 import {FilmCount} from "../consts";
 
@@ -72,7 +73,7 @@ export default class MovieList {
     };
 
     const onEscKeyDown = (event) => {
-      if (event.key === `Escape` || event.key === `Esc`) {
+      if (isEscKeyPressed) {
         event.preventDefault();
         hideFilmDetailsPopup();
       }
@@ -128,7 +129,7 @@ export default class MovieList {
   }
 
   _renderMovieShowcase() {
-    if (this._movieShowcaseFilms.length === 0) {
+    if (!this._movieShowcaseFilms.length) {
       render(this._filmSectionComponent, this._noFilmComponent, RenderPosition.BEFOREEND);
       return;
     }
