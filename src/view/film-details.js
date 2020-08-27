@@ -1,4 +1,5 @@
-import {createElement, humanizeFilmReleaseDate, humanizeCommentPostDate} from "../utils.js";
+import {humanizeFilmReleaseDate, humanizeCommentPostDate} from "../utils/films";
+import AbstractView from "./abstract";
 
 const createFilmDetailsTemplate = (film) => {
   const {
@@ -173,24 +174,25 @@ const createFilmDetailsTemplate = (film) => {
   );
 };
 
-export default class FilmsDertails {
+export default class FilmsDertails extends AbstractView {
   constructor(film) {
+    super();
     this._film = film;
-    this._element = null;
+
+    this._closeDetailsClickHandler = this._closeDetailsClickHandler.bind(this);
   }
 
   _getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-    return this._element;
+  _closeDetailsClickHandler(event) {
+    event.preventDefault();
+    this._callback.closeDetailsClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseDetailsClickHandler(callback) {
+    this._callback.closeDetailsClick = callback;
+    this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeDetailsClickHandler);
   }
 }

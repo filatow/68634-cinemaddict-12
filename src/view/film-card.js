@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import AbstractView from "./abstract";
 
 const createFilmCardTemplate = (film) => {
   const {
@@ -44,24 +44,30 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmsCard {
+export default class FilmsCard extends AbstractView {
   constructor(film) {
+    super();
     this._film = film;
-    this._element = null;
+
+    this._toDetailsClick = this._toDetailsClick.bind(this);
   }
 
   _getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  get element() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
+  _toDetailsClick(event) {
+    if (event.target.tagName === `A`) {
+      event.preventDefault();
     }
-    return this._element;
+    this._callback.toDetailsClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setToDetailsClickHandler(callback) {
+    this._callback.toDetailsClick = callback;
+    this.element.querySelectorAll(`.film-card__poster, .film-card__title, .film-card__comments`)
+    .forEach((elem) => {
+      elem.addEventListener(`click`, this._toDetailsClick);
+    });
   }
 }
