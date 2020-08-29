@@ -14,3 +14,9 @@ export const FILM_GENRES = [
   `Comedy`,
   `Cartoon`,
 ];
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RAITING: `raiting`
+};
+
