@@ -19,3 +19,35 @@ export const getFilmsSortedByRating = (films) => {
 export const getFilmsSortedByCommentsAmount = (films) => {
   return films.slice().sort((a, b) => b.comments.length - a.comments.length);
 };
+
+const getWeightForNullValue = (valueA, valueB) => {
+  if (valueA === null && valueB === null) {
+    return 0;
+  }
+  if (valueA === null) {
+    return 1;
+  }
+  if (valueB === null) {
+    return -1;
+  }
+
+  return null;
+};
+
+export const sortByDate = (filmA, filmB) => {
+  const weight = getWeightForNullValue(filmA.releaseDate, filmB.releaseDate);
+  if (weight !== null) {
+    return weight;
+  }
+
+  return (filmB.releaseDate.getTime() - filmA.releaseDate.getTime());
+};
+
+export const sortByRaiting = (filmA, filmB) => {
+  const weight = getWeightForNullValue(Number(filmA.raiting), Number(filmB.raiting));
+  if (weight !== null) {
+    return weight;
+  }
+
+  return (Number(filmB.raiting) - Number(filmA.raiting));
+};

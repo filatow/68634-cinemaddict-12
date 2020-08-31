@@ -3,14 +3,13 @@ import AbstractView from "./abstract";
 
 const createFilmDetailsTemplate = (film) => {
   const {
-    title, poster, releaseDate,
-    raiting, duration, description,
+    title, titleOriginal, poster, releaseDate,
+    raiting, duration, fullDescription,
     genres, comments, director,
     writers, actors, country,
     ageLimitation, isWatchlisted, isWatched,
     isFavorite} = film;
 
-  const filmDescription = description.join(``);
   const filmReleaseDate = humanizeFilmReleaseDate(releaseDate);
   const filmGenres = genres
     .map((genre) => `<span class="film-details__genre">${genre}</span>`)
@@ -71,7 +70,7 @@ const createFilmDetailsTemplate = (film) => {
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${title}</h3>
-                <p class="film-details__title-original">Original: ${title}</p>
+                <p class="film-details__title-original">Original: ${titleOriginal}</p>
               </div>
 
               <div class="film-details__rating">
@@ -113,7 +112,7 @@ const createFilmDetailsTemplate = (film) => {
             </table>
 
             <p class="film-details__film-description">
-            ${filmDescription}
+            ${fullDescription}
             </p>
           </div>
         </div>

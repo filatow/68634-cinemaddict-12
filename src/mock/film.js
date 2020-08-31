@@ -60,9 +60,15 @@ const generateDescription = () => {
   const descriptionPatterns = LOREM_IPSUM.split(`.`).filter(Boolean).map((str) => `${str}. `);
   const descriptionPatternsLastIndex = descriptionPatterns.length - 1;
 
-  return new Array(getRandomInteger(1, 5)).fill()
+  const description = new Array(getRandomInteger(1, 5)).fill()
     .map(() => descriptionPatterns[getRandomInteger(0, descriptionPatternsLastIndex)]);
-  // .join(``).trimRight();
+
+  const fullDescription = description.join(``).trimRight();
+  const shortDescription = fullDescription.length > 140
+    ? fullDescription.slice(0, 140) + `...`
+    : fullDescription;
+
+  return {fullDescription, shortDescription};
 };
 
 const generateDirector = () => {
@@ -168,15 +174,18 @@ const generateReleaseDate = () => {
 };
 
 export const generateFilm = () => {
+  const {fullDescription, shortDescription} = generateDescription();
 
   return {
     title: generateTitle(),
+    titleOriginal: generateTitle(),
     poster: generatePoster(),
     releaseDate: generateReleaseDate(),
     raiting: generateRating(),
     duration: generateDuration(),
     genres: generateGenres(),
-    description: generateDescription(),
+    fullDescription,
+    shortDescription,
     director: generateDirector(),
     writers: generateWriters(),
     actors: generateActors(),
