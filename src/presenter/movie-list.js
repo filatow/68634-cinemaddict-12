@@ -9,7 +9,7 @@ import FilmsListTopRatedView from "../view/films-list-top-rated";
 import ShowMoreButtonView from "../view/show-more-button";
 import FilmCardView from "../view/film-card";
 import FilmsDetailsView from "../view/film-details";
-import {render, RenderPosition} from "../utils/render";
+import {render, RenderPosition, replace, remove} from "../utils/render";
 import {isEscKeyPressed} from "../utils/common";
 import {getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "../utils/films";
 import {FilmCount, SortType} from "../consts";
@@ -74,18 +74,26 @@ export default class MovieList {
       return;
     }
 
-    this._sortFilms(sortType);
+    this._refreshSorting(sortType);
 
+    this._sortFilms(sortType);
     this._clearBaseFilmListFilmCards();
     this._renderBaseFilmListFilmCards(RenderPosition.AFTERBEGIN);
-
   }
-
 
   _renderSorting() {
     render(this._movieShowcaseContainer, this._sortingComponent, RenderPosition.BEFOREEND);
 
     this._sortingComponent.setSortChangeHandler(this._handleSortTypeChange);
+  }
+
+  _refreshSorting(sortType) {
+    this._currentSortType = sortType;
+    const oldSortingComponent = this._sortingComponent;
+    this._sortingComponent = new SortingView(this._currentSortType);
+    this._sortingComponent.setSortChangeHandler(this._handleSortTypeChange);
+    replace(this._sortingComponent, oldSortingComponent);
+    remove(oldSortingComponent);
   }
 
   _renderFilmSection() {

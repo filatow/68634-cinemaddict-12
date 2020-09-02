@@ -181,6 +181,11 @@ export default class FilmsDertails extends AbstractView {
     this._closeDetailsClickHandler = this._closeDetailsClickHandler.bind(this);
   }
 
+  setCloseDetailsClickHandler(callback) {
+    this._callback.closeDetailsClick = callback;
+    this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeDetailsClickHandler);
+  }
+
   _getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
@@ -188,10 +193,5 @@ export default class FilmsDertails extends AbstractView {
   _closeDetailsClickHandler(event) {
     event.preventDefault();
     this._callback.closeDetailsClick();
-  }
-
-  setCloseDetailsClickHandler(callback) {
-    this._callback.closeDetailsClick = callback;
-    this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeDetailsClickHandler);
   }
 }

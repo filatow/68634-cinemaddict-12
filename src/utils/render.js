@@ -37,3 +37,28 @@ export const createElement = (template) => {
   newElement.innerHTML = template;
   return newElement.firstChild;
 };
+
+export const replace = (newChild, oldChild) => {
+  if (newChild instanceof Abstract) {
+    newChild = newChild.element;
+  }
+  if (oldChild instanceof Abstract) {
+    oldChild = oldChild.element;
+  }
+
+  const parent = oldChild.parentElement;
+
+  if (parent === null || newChild === null || oldChild === null) {
+    throw new Error(`Can't replace unexisting elements`);
+  }
+
+  parent.replaceChild(newChild, oldChild);
+};
+
+export const remove = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error(`Can remove only components`);
+  }
+  component.element.remove();
+  component.removeElement();
+};
