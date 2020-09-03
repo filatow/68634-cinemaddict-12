@@ -7,10 +7,8 @@ import FilmsListContainerView from "../view/film-list-container";
 import FilmsListMostCommentedView from "../view/films-list-most-commented";
 import FilmsListTopRatedView from "../view/films-list-top-rated";
 import ShowMoreButtonView from "../view/show-more-button";
-import FilmCardView from "../view/film-card";
-import FilmsDetailsView from "../view/film-details";
+import MoviePresenter from "./movie";
 import {render, RenderPosition, replace, remove} from "../utils/render";
-import {isEscKeyPressed} from "../utils/common";
 import {getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "../utils/films";
 import {FilmCount, SortType} from "../consts";
 import {sortByDate, sortByRaiting} from "../utils/films";
@@ -104,42 +102,16 @@ export default class MovieList {
     render(this._filmSectionComponent, this._noFilmComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderFilmCard(filmListContainer, film) {
-    const filmCardComponent = new FilmCardView(film);
-    const filmDetailsComponent = new FilmsDetailsView(film);
-
-    const showFilmDetailsPopup = () => {
-      this._popupContainer.appendChild(filmDetailsComponent.element);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const hideFilmDetailsPopup = () => {
-      this._popupContainer.removeChild(filmDetailsComponent.element);
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const onEscKeyDown = (event) => {
-      if (isEscKeyPressed) {
-        event.preventDefault();
-        hideFilmDetailsPopup();
-      }
-    };
-
-    filmCardComponent.setToDetailsClickHandler(() => {
-      showFilmDetailsPopup();
-    });
-
-    filmDetailsComponent.setCloseDetailsClickHandler(() => {
-      hideFilmDetailsPopup();
-    });
-
-    render(filmListContainer, filmCardComponent, RenderPosition.BEFOREEND);
+  _renderFilmCard(filmListContainer, film, popupContainer) {
+    const moviePresenter = new MoviePresenter(filmListContainer);
+    moviePresenter.init(film, popupContainer);
   }
 
   _handleShowMoreButtonClick() {
     this._movieShowcaseFilms
     .slice(this._renderedFilmCardsCount, this._renderedFilmCardsCount + FilmCount.PER_STEP)
-    .forEach((movieShowcaseFilm) => this._renderFilmCard(this._baseFilmsListContainerComponent, movieShowcaseFilm));
+    .forEach((movieShowcaseFilm) => this._renderFilmCard(
+        this._baseFilmsListContainerComponent, movieShowcaseFilm, this._popupContainer));
 
     this._renderedFilmCardsCount += FilmCount.PER_STEP;
     if (this._renderedFilmCardsCount >= this._movieShowcaseFilms.length) {
@@ -163,7 +135,8 @@ export default class MovieList {
     render(this._baseFilmsListComponent, this._baseFilmsListContainerComponent, RenderPosition.BEFOREEND);
 
     for (let i = 0; i < Math.min(FilmCount.PER_STEP, this._movieShowcaseFilms.length); i++) {
-      this._renderFilmCard(this._baseFilmsListContainerComponent, this._movieShowcaseFilms[i]);
+      this._renderFilmCard(
+          this._baseFilmsListContainerComponent, this._movieShowcaseFilms[i], this._popupContainer);
     }
 
     if (this._movieShowcaseFilms.length > FilmCount.PER_STEP) {
@@ -176,7 +149,7 @@ export default class MovieList {
     const FilmsListContainerComponent = new FilmsListContainerView();
     render(filmsList, FilmsListContainerComponent, RenderPosition.BEFOREEND);
     for (let i = 0; i < FilmCount.FOR_EXTRAFILMLIST; i++) {
-      this._renderFilmCard(FilmsListContainerComponent, sortedFilms[i]);
+      this._renderFilmCard(FilmsListContainerComponent, sortedFilms[i], this._popupContainer);
     }
   }
 
