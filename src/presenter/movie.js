@@ -1,6 +1,6 @@
 import FilmCardView from "../view/film-card";
 import FilmsDetailsView from "../view/film-details";
-import {render, RenderPosition} from "../utils/render";
+import {render, replace, remove, RenderPosition} from "../utils/render";
 import {isEscKeyPressed} from "../utils/common";
 
 export default class Movie {
@@ -9,7 +9,6 @@ export default class Movie {
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
-    this._popupContainer = null;
 
     this._handleToDetailsClick = this._handleToDetailsClick.bind(this);
     this._handleCloseDetailsClick = this._handleCloseDetailsClick.bind(this);
@@ -18,6 +17,10 @@ export default class Movie {
 
   init(film, popupContainer) {
     this._film = film;
+
+    const prevFilmCardComponent = this._filmCardComponent;
+    const prevFilmDetailsComponent = this._filmDetailsComponent;
+
     this._filmCardComponent = new FilmCardView(this._film);
     this._filmDetailsComponent = new FilmsDetailsView(this._film);
     this._popupContainer = popupContainer;
@@ -25,8 +28,26 @@ export default class Movie {
     this._filmCardComponent.setToDetailsClickHandler(this._handleToDetailsClick);
     this._filmDetailsComponent.setCloseDetailsClickHandler(this._handleCloseDetailsClick);
 
-    render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
+    if (prevFilmCardComponent === null || prevFilmDetailsComponent === null) {
+      render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
+      return;
+    }
 
+    if (this._filmListContainer.element.contains(prevFilmCardComponent.element)) {
+      replace(this._filmCardComponent, prevFilmCardComponent);
+    }
+
+    if (this._filmListContainer.element.contains(prevFilmDetailsComponent.element)) {
+      replace(this._filmDetailsComponent, prevFilmDetailsComponent);
+    }
+
+    remove(prevFilmCardComponent);
+    remove(prevFilmDetailsComponent);
+  }
+
+  destroy() {
+    remove(this._filmCardComponent);
+    remove(this._filmDetailsComponent);
   }
 
   _showFilmDetailsPopup() {
