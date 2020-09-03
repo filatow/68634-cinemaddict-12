@@ -1,4 +1,5 @@
 import {getRandomInteger} from "../utils/common";
+import {nanoid} from "../utils/nanoid";
 import {LOREM_IPSUM, FILM_GENRES} from "../consts";
 import {generateComment} from "./comment";
 
@@ -30,6 +31,8 @@ const generatePoster = () => {
   ];
   return `images/posters/` + posters[getRandomInteger(0, posters.length - 1)];
 };
+
+const generateId = () => nanoid(12);
 
 const generateRating = () => {
   return String((getRandomInteger(40, 100) / 10));
@@ -177,6 +180,7 @@ export const generateFilm = () => {
   const {fullDescription, shortDescription} = generateDescription();
 
   return {
+    id: generateId(),
     title: generateTitle(),
     titleOriginal: generateTitle(),
     poster: generatePoster(),

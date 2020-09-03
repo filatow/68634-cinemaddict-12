@@ -17,6 +17,7 @@ export default class MovieList {
   constructor(movieShowcaseContainer, filters) {
     this._movieShowcaseContainer = movieShowcaseContainer;
     this._currentSortType = SortType.DEFAULT;
+    this._moviePresenter = {};
 
     this._siteMenuComponent = new SiteMenuView(filters);
     this._sortingComponent = new SortingView();
@@ -105,6 +106,7 @@ export default class MovieList {
   _renderFilmCard(filmListContainer, film, popupContainer) {
     const moviePresenter = new MoviePresenter(filmListContainer);
     moviePresenter.init(film, popupContainer);
+    this._moviePresenter[film.id] = moviePresenter;
   }
 
   _handleShowMoreButtonClick() {
@@ -126,7 +128,10 @@ export default class MovieList {
   }
 
   _clearBaseFilmListFilmCards() {
-    this._baseFilmsListContainerComponent.element.innerHTML = ``;
+    Object
+      .values(this._moviePresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter = {};
     this._renderedFilmCardsCount = FilmCount.PER_STEP;
   }
 
