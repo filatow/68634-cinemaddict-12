@@ -8,7 +8,7 @@ const createFilmsListTopRatedTemplate = () => {
   );
 };
 
-export default class FilmsListTopRated extends AbstractView {
+export default class FilmsListTopRatedSection extends AbstractView {
   _getTemplate() {
     return createFilmsListTopRatedTemplate();
   }
