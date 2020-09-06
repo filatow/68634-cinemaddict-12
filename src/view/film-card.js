@@ -45,25 +45,59 @@ export default class FilmsCard extends AbstractView {
     super();
     this._film = film;
 
-    this._toDetailsClick = this._toDetailsClick.bind(this);
+    this._toDetailsClickHandler = this._toDetailsClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
   }
 
   setToDetailsClickHandler(callback) {
     this._callback.toDetailsClick = callback;
     this.element.querySelectorAll(`.film-card__poster, .film-card__title, .film-card__comments`)
     .forEach((elem) => {
-      elem.addEventListener(`click`, this._toDetailsClick);
+      elem.addEventListener(`click`, this._toDetailsClickHandler);
     });
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClickHandler = callback;
+    this.element.querySelector(`.film-card__controls-item--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClickHandler = callback;
+    this.element.querySelector(`.film-card__controls-item--mark-as-watched`).addEventListener(`click`, this._watchedClickHandler);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClickHandler = callback;
+    this.element.querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._watchlistClickHandler);
   }
 
   _getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  _toDetailsClick(event) {
+  _toDetailsClickHandler(event) {
     if (event.target.tagName === `A`) {
       event.preventDefault();
     }
+
     this._callback.toDetailsClick();
+  }
+
+  _favoriteClickHandler(event) {
+    event.preventDefault();
+    this._callback.favoriteClickHandler();
+  }
+
+  _watchedClickHandler(event) {
+    event.preventDefault();
+    this._callback.watchedClickHandler();
+  }
+
+  _watchlistClickHandler(event) {
+    event.preventDefault();
+    this._callback.watchlistClickHandler();
   }
 }

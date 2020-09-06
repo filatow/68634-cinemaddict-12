@@ -4,28 +4,41 @@ import {render, replace, remove, RenderPosition} from "../utils/render";
 import {isEscKeyPressed} from "../utils/common";
 
 export default class Movie {
-  constructor(filmListContainer) {
+  constructor(filmListContainer, changeFilmData) {
     this._filmListContainer = filmListContainer;
+    this._changeFilmData = changeFilmData;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
 
     this._handleToDetailsClick = this._handleToDetailsClick.bind(this);
     this._handleCloseDetailsClick = this._handleCloseDetailsClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
+    this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
+    this._handlePopupWatchedClick = this._handlePopupWatchedClick.bind(this);
+    this._handlePopupWatchlistClick = this._handlePopupWatchlistClick.bind(this);
     this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
   }
 
   init(film, popupContainer) {
     this._film = film;
+    this._popupContainer = popupContainer;
 
     const prevFilmCardComponent = this._filmCardComponent;
     const prevFilmDetailsComponent = this._filmDetailsComponent;
 
     this._filmCardComponent = new FilmCardView(this._film);
     this._filmDetailsComponent = new FilmsDetailsView(this._film);
-    this._popupContainer = popupContainer;
 
     this._filmCardComponent.setToDetailsClickHandler(this._handleToDetailsClick);
+    this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._filmCardComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmDetailsComponent.setFavoriteClickHandler(this._handlePopupFavoriteClick);
+    this._filmDetailsComponent.setWatchedClickHandler(this._handlePopupWatchedClick);
+    this._filmDetailsComponent.setWatchlistClickHandler(this._handlePopupWatchlistClick);
     this._filmDetailsComponent.setCloseDetailsClickHandler(this._handleCloseDetailsClick);
 
     if (prevFilmCardComponent === null || prevFilmDetailsComponent === null) {
@@ -56,7 +69,9 @@ export default class Movie {
   }
 
   _hideFilmDetailsPopup() {
-    this._popupContainer.removeChild(this._filmDetailsComponent.element);
+    if (this._popupContainer.contains(this._filmDetailsComponent.element)) {
+      this._popupContainer.removeChild(this._filmDetailsComponent.element);
+    }
     document.removeEventListener(`keydown`, this._handleEscKeyDown);
   }
 
@@ -71,8 +86,66 @@ export default class Movie {
     this._showFilmDetailsPopup();
   }
 
-  _handleCloseDetailsClick() {
+  _handleFavoriteClick() {
+    this._changeFilmData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isFavorite: !this._film.isFavorite
+            }
+        )
+    );
+  }
+
+  _handleWatchedClick() {
+    this._changeFilmData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isWatched: !this._film.isWatched
+            }
+        )
+    );
+  }
+
+  _handleWatchlistClick() {
+    this._changeFilmData(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isWatchlisted: !this._film.isWatchlisted
+            }
+        )
+    );
+  }
+
+  _handlePopupFavoriteClick() {
+    const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
+    this._handleFavoriteClick();
+    this._showFilmDetailsPopup();
+    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+  }
+
+  _handlePopupWatchedClick() {
+    const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
+    this._handleWatchedClick();
+    this._showFilmDetailsPopup();
+    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+  }
+
+  _handlePopupWatchlistClick() {
+    const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
+    this._handleWatchlistClick();
+    this._showFilmDetailsPopup();
+    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+  }
+
+  _handleCloseDetailsClick(film) {
     this._hideFilmDetailsPopup();
+    this._changeFilmData(film);
   }
 
 }

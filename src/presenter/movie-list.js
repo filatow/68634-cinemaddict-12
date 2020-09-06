@@ -9,6 +9,7 @@ import FilmsListTopRatedSectionView from "../view/films-list-top-rated";
 import ShowMoreButtonView from "../view/show-more-button";
 import MoviePresenter from "./movie";
 import {render, RenderPosition, replace, remove} from "../utils/render";
+import {updateItem} from '../utils/common';
 import {getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "../utils/films";
 import {FilmCount, SortType} from "../consts";
 import {sortByDate, sortByRaiting} from "../utils/films";
@@ -37,14 +38,15 @@ export default class MovieList {
     this._showMoreButtonComponent = new ShowMoreButtonView();
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleFilmChange = this._handleFilmChange.bind(this);
   }
 
   init(movieShowcaseFilms, popupContainer) {
-    this._movieShowcaseFilms = movieShowcaseFilms.slice();
-    this._sourcedMovieShowcaseFilms = movieShowcaseFilms.slice();
-
     this._popupContainer = popupContainer;
     this._renderedFilmCardsCount = FilmCount.PER_STEP;
+
+    this._movieShowcaseFilms = movieShowcaseFilms.slice();
+    this._sourcedMovieShowcaseFilms = movieShowcaseFilms.slice();
 
     this._renderSiteMenu();
     this._renderSorting();
@@ -96,8 +98,8 @@ export default class MovieList {
   }
 
   _renderFilmCard(filmListContainer, film, popupContainer, extraMoviePresenter = null) {
-    const moviePresenter = new MoviePresenter(filmListContainer);
-    moviePresenter.init(film, popupContainer);
+    const moviePresenter = new MoviePresenter(filmListContainer, this._handleFilmChange);
+    moviePresenter.init(film, this._popupContainer);
     if (extraMoviePresenter !== null) {
       if (!Object.keys(extraMoviePresenter).includes(film.id)) {
         extraMoviePresenter[film.id] = moviePresenter;
@@ -214,5 +216,17 @@ export default class MovieList {
         this._FilmsListMostCommentedContainerComponent,
         getFilmsSortedByCommentsAmount(this._movieShowcaseFilms),
         this._mostCommentedMoviePresenter);
+  }
+
+  _handleFilmChange(updatedFilm) {
+    this._movieShowcaseFilms = updateItem(this._movieShowcaseFilms, updatedFilm);
+    this._sourcedMovieShowcaseFilms = updateItem(this._sourcedMovieShowcaseFilms, updatedFilm);
+    this._baseMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
+    if (Object.keys(this._topRaitedMoviePresenter).includes(updatedFilm.id)) {
+      this._topRaitedMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
+    }
+    if (Object.keys(this._mostCommentedMoviePresenter).includes(updatedFilm.id)) {
+      this._mostCommentedMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
+    }
   }
 }
