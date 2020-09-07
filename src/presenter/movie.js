@@ -76,7 +76,7 @@ export default class Movie {
   }
 
   _handleEscKeyDown(event) {
-    if (isEscKeyPressed) {
+    if (isEscKeyPressed()) {
       event.preventDefault();
       this._hideFilmDetailsPopup();
     }
