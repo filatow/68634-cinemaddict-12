@@ -1,7 +1,72 @@
 import {humanizeFilmReleaseDate, humanizeCommentPostDate} from "../utils/films";
+import {renderTemplate, RenderPosition} from "../utils/render";
 import AbstractView from "./abstract";
 
-const createFilmDetailsTemplate = (film) => {
+const createNewCommentTemplate = (newComment) => {
+  let {text, selectedEmojiImage, checkedEmojiOption} = newComment;
+
+  let emojiSmileIsChecked = false;
+  let emojiSleepingIsChecked = false;
+  let emojiPukeIsChecked = false;
+  let emojiAngryIsChecked = false;
+
+  switch (checkedEmojiOption) {
+    case `smile`:
+      emojiSmileIsChecked = true;
+      selectedEmojiImage = `<img src="images/emoji/smile.png" width="55" height="55" alt="emoji-smile">`;
+      break;
+    case `sleeping`:
+      emojiSleepingIsChecked = true;
+      selectedEmojiImage = `<img src="images/emoji/sleeping.png" width="55" height="55" alt="emoji-sleeping">`;
+      break;
+    case `puke`:
+      emojiPukeIsChecked = true;
+      selectedEmojiImage = `<img src="images/emoji/puke.png" width="55" height="55" alt="emoji-puke">`;
+      break;
+    case `angry`:
+      emojiAngryIsChecked = true;
+      selectedEmojiImage = `<img src="images/emoji/angry.png" width="55" height="55" alt="emoji-angry">`;
+      break;
+  }
+
+  return (`
+    <div class="film-details__new-comment">
+      <div for="add-emoji" class="film-details__add-emoji-label">${selectedEmojiImage}</div>
+
+      <label class="film-details__comment-label">
+        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${text}</textarea>
+      </label>
+
+      <div class="film-details__emoji-list">
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji"
+        type="radio" id="emoji-smile" value="smile" ${emojiSmileIsChecked ? `checked` : ``}>
+        <label class="film-details__emoji-label" for="emoji-smile">
+          <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+        </label>
+
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji"
+        type="radio" id="emoji-sleeping" value="sleeping" ${emojiSleepingIsChecked ? `checked` : ``}>
+        <label class="film-details__emoji-label" for="emoji-sleeping">
+          <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+        </label>
+
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji"
+        type="radio" id="emoji-puke" value="puke" ${emojiPukeIsChecked ? `checked` : ``}>
+        <label class="film-details__emoji-label" for="emoji-puke">
+          <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+        </label>
+
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji"
+        type="radio" id="emoji-angry" value="angry" ${emojiAngryIsChecked ? `checked` : ``}>
+        <label class="film-details__emoji-label" for="emoji-angry">
+          <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+        </label>
+      </div>
+    </div>`);
+};
+
+
+const createFilmDetailsTemplate = (film, newComment) => {
   const {
     title, titleOriginal, poster, releaseDate,
     raiting, duration, fullDescription,
@@ -52,40 +117,7 @@ const createFilmDetailsTemplate = (film) => {
 
   const commentsCount = film.comments.length;
 
-  const createNewCommentTemplate = () => {
-    return (`
-      <div class="film-details__new-comment">
-        <div for="add-emoji" class="film-details__add-emoji-label"></div>
-
-        <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-        </label>
-
-        <div class="film-details__emoji-list">
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-          <label class="film-details__emoji-label" for="emoji-smile">
-            <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-          </label>
-
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-          <label class="film-details__emoji-label" for="emoji-sleeping">
-            <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-          </label>
-
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-          <label class="film-details__emoji-label" for="emoji-puke">
-            <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-          </label>
-
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-          <label class="film-details__emoji-label" for="emoji-angry">
-            <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-          </label>
-        </div>
-      </div>`);
-  };
-
-  const newComment = createNewCommentTemplate();
+  const newCommentTemplate = createNewCommentTemplate(newComment);
 
   return (
     `<section class="film-details">
@@ -172,7 +204,7 @@ const createFilmDetailsTemplate = (film) => {
             ${filmComments}
           </ul>
 
-          ${newComment}
+          ${newCommentTemplate}
         </section>
       </div>
     </form>
@@ -184,6 +216,12 @@ export default class FilmsDertails extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
+    this._newCommentData = {
+      text: ``,
+      checkedEmojiOption: null,
+      selectedEmojiImage: ``,
+    };
+    this._enableNewCommentWatcher();
 
     this._closeDetailsClickHandler = this._closeDetailsClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -212,7 +250,7 @@ export default class FilmsDertails extends AbstractView {
   }
 
   _getTemplate() {
-    return createFilmDetailsTemplate(this._film);
+    return createFilmDetailsTemplate(this._film, this._newCommentData);
   }
 
   _closeDetailsClickHandler(event) {
@@ -234,4 +272,52 @@ export default class FilmsDertails extends AbstractView {
     event.preventDefault();
     this._callback.watchlistClickHandler();
   }
+
+  _enableNewCommentWatcher() {
+
+    const setEditNewCommentHandlers = () => {
+      this.element
+        .querySelector(`.film-details__emoji-list`)
+        .addEventListener(`click`, emojiChangeHandler);
+      this.element
+        .querySelector(`.film-details__comment-input`)
+        .addEventListener(`input`, textChangeHandler);
+    };
+
+    const updateNewCommentElement = () => {
+      this.element.querySelector(`.film-details__new-comment`).remove();
+      const newCommentTemplate = createNewCommentTemplate(this._newCommentData);
+      renderTemplate(
+          this.element.querySelector(`.film-details__comments-wrap`), newCommentTemplate, RenderPosition.BEFOREEND);
+      setEditNewCommentHandlers();
+    };
+
+    const emojiChangeHandler = (event) => {
+      switch (event.target.tagName) {
+        case `IMG`:
+          this._newCommentData.checkedEmojiOption = event.target.parentElement.previousElementSibling.value;
+          break;
+        case `LABEL`:
+          this._newCommentData.checkedEmojiOption = event.target.previousElementSibling.value;
+          break;
+        default:
+          return;
+      }
+
+      updateNewCommentElement();
+    };
+
+    const textChangeHandler = (event) => {
+      this._newCommentData.text = event.target.value;
+
+      updateNewCommentElement();
+
+      const textArea = this.element.querySelector(`.film-details__comment-input`);
+      textArea.focus();
+      textArea.selectionStart = textArea.value.length;
+    };
+
+    setEditNewCommentHandlers();
+  }
+
 }

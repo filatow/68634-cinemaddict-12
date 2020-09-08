@@ -97,7 +97,7 @@ export default class MovieList {
     render(this._showcaseSectionComponent, this._noFilmComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderFilmCard(filmListContainer, film, popupContainer, extraMoviePresenter = null) {
+  _renderFilmCard(filmListContainer, film, extraMoviePresenter = null) {
     const moviePresenter = new MoviePresenter(filmListContainer, this._handleFilmChange);
     moviePresenter.init(film, this._popupContainer);
     if (extraMoviePresenter !== null) {
@@ -136,7 +136,7 @@ export default class MovieList {
 
     for (let i = 0; i < Math.min(FilmCount.PER_STEP, this._movieShowcaseFilms.length); i++) {
       this._renderFilmCard(
-          this._baseFilmsListContainerComponent, this._movieShowcaseFilms[i], this._popupContainer);
+          this._baseFilmsListContainerComponent, this._movieShowcaseFilms[i]);
     }
 
     if (this._movieShowcaseFilms.length > FilmCount.PER_STEP) {
@@ -147,7 +147,7 @@ export default class MovieList {
   _renderExtraFilmListFilmCards(filmsListContainer, sortedFilms, extraMoviePresenter) {
     for (let i = 0; i < FilmCount.FOR_EXTRAFILMLIST; i++) {
       this._renderFilmCard(
-          filmsListContainer, sortedFilms[i], this._popupContainer, extraMoviePresenter);
+          filmsListContainer, sortedFilms[i], extraMoviePresenter);
     }
   }
 
@@ -185,7 +185,7 @@ export default class MovieList {
     this._movieShowcaseFilms
     .slice(this._renderedFilmCardsCount, this._renderedFilmCardsCount + FilmCount.PER_STEP)
     .forEach((movieShowcaseFilm) => this._renderFilmCard(
-        this._baseFilmsListContainerComponent, movieShowcaseFilm, this._popupContainer));
+        this._baseFilmsListContainerComponent, movieShowcaseFilm));
 
     this._renderedFilmCardsCount += FilmCount.PER_STEP;
     if (this._renderedFilmCardsCount >= this._movieShowcaseFilms.length) {

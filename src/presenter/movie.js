@@ -143,9 +143,13 @@ export default class Movie {
     this._filmDetailsComponent.element.scrollTop = popupScrollTop;
   }
 
-  _handleCloseDetailsClick(film) {
+  _handleCloseDetailsClick() {
     this._hideFilmDetailsPopup();
-    this._changeFilmData(film);
   }
+
+  // _handleEnterKeyDown(film) {
+  //   this._hideFilmDetailsPopup();
+  //   this._changeFilmData(film);
+  // }
 
 }
