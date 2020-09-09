@@ -5,8 +5,16 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const isEscKeyPressed = () => {
+export const isEscKeyPressed = (event) => {
   return (event.key === `Escape` || event.key === `Esc`);
+};
+
+export const isEnterKeyPressed = (event) => {
+  return (event.key === `Enter`);
+};
+
+export const isCtrlKeyPressed = (event) => {
+  return (event.key === `Control`);
 };
 
 export const updateItem = (items, updatedItem) => {
