@@ -2,14 +2,21 @@ import FilmCardView from "../view/film-card";
 import FilmDetailsView from "../view/film-details";
 import {render, replace, remove, RenderPosition} from "../utils/render";
 
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  DETAILED: `DETAILED`
+};
+
 export default class Movie {
-  constructor(filmListContainer, changeFilmData, refreshFilmLists) {
+  constructor(filmListContainer, changeFilmData, refreshFilmLists, changeViewMode) {
     this._filmListContainer = filmListContainer;
     this._changeFilmData = changeFilmData;
+    this._changeViewMode = changeViewMode;
     this._refreshFilmLists = refreshFilmLists;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleToDetailsClick = this._handleToDetailsClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -63,26 +70,38 @@ export default class Movie {
     remove(this._filmDetailsComponent);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._handleCloseDetails();
+      document.removeEventListener(`keydown`, this._viewingPopupHandler);
+    }
+  }
+
   _showFilmDetailsPopup() {
     this._popupContainer.appendChild(this._filmDetailsComponent.element);
     this._filmDetailsComponent.setViewingPopupHandler(this._handleViewingPopup);
   }
 
+  _handleToDetailsClick() {
+    this._changeViewMode();
+    this._showFilmDetailsPopup();
+    this._mode = Mode.DETAILED;
+  }
+
   _handleViewingPopup(film) {
     const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
+
     this._changeFilmData(film);
     this._refreshFilmLists(`most-commented`);
     this._showFilmDetailsPopup();
-    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
-  }
 
-  _handleToDetailsClick() {
-    this._showFilmDetailsPopup();
+    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
   }
 
   _handleCloseDetails() {
     if (this._popupContainer.contains(this._filmDetailsComponent.element)) {
       this._popupContainer.removeChild(this._filmDetailsComponent.element);
+      this._mode = Mode.DEFAULT;
     }
   }
 

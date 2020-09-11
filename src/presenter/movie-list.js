@@ -39,6 +39,7 @@ export default class MovieList {
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
 
     this._clearFilmListFilmCards = this._clearFilmListFilmCards.bind(this);
     this._renderExtraFilmListFilmCards = this._renderExtraFilmListFilmCards.bind(this);
@@ -105,7 +106,8 @@ export default class MovieList {
   }
 
   _renderFilmCard(filmListContainer, film, extraMoviePresenter = null) {
-    const moviePresenter = new MoviePresenter(filmListContainer, this._handleFilmChange, this._refreshFilmLists);
+    const moviePresenter = new MoviePresenter(
+        filmListContainer, this._handleFilmChange, this._refreshFilmLists, this._handleModeChange);
     moviePresenter.init(film, this._popupContainer);
     if (extraMoviePresenter !== null) {
       if (!Object.keys(extraMoviePresenter).includes(film.id)) {
@@ -251,6 +253,18 @@ export default class MovieList {
     if (Object.keys(this._mostCommentedMoviePresenter).includes(updatedFilm.id)) {
       this._mostCommentedMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
     }
+  }
+
+  _handleModeChange() {
+    [
+      this._baseMoviePresenter,
+      this._topRaitedMoviePresenter,
+      this._mostCommentedMoviePresenter
+    ].forEach((moviePresenter) => {
+      Object
+        .values(moviePresenter)
+        .forEach((presenter) => presenter.resetView());
+    });
   }
 
   _handleShowMoreButtonClick() {
