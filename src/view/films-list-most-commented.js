@@ -8,7 +8,7 @@ const createFilmsListMostCommentedTemplate = () => {
   );
 };
 
-export default class FilmsListMostCommented extends AbstractView {
+export default class FilmsListMostCommentedSection extends AbstractView {
   _getTemplate() {
     return createFilmsListMostCommentedTemplate();
   }

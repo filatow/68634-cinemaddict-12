@@ -10,10 +10,6 @@ export default class Abstract {
     this._callback = {};
   }
 
-  _getTemplate() {
-    throw new Error(`Abstract method not implemented: getTemplate`);
-  }
-
   get element() {
     if (!this._element) {
       this._element = createElement(this._getTemplate());
@@ -25,4 +21,7 @@ export default class Abstract {
     this._element = null;
   }
 
+  _getTemplate() {
+    throw new Error(`Abstract method not implemented: getTemplate`);
+  }
 }
