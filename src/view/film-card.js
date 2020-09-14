@@ -79,7 +79,7 @@ export default class FilmsCard extends AbstractView {
   }
 
   _toDetailsClickHandler(event) {
-    if (event.target.tagName === `A`) {
+    if (event.target.classList.contains(`film-card__comments`)) {
       event.preventDefault();
     }
 

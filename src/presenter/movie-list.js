@@ -9,11 +9,17 @@ import FilmsListTopRatedSectionView from "../view/films-list-top-rated";
 import ShowMoreButtonView from "../view/show-more-button";
 import MoviePresenter from "./movie";
 import {render, RenderPosition, replace, remove} from "../utils/render";
-import {updateItem} from '../utils/common';
 import {getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "../utils/films";
 import {FilmCount, SortType} from "../consts";
 import {sortByDate, sortByRaiting} from "../utils/films";
 
+const RefreshingTarget = {
+  ALL: `all`,
+  BASE: `base`,
+  EXTRA: `extra`,
+  TOP_RAITED: `top-raited`,
+  MOST_COMMENTED: `most-commented`,
+};
 export default class MovieList {
   constructor(movieShowcaseContainer, filters) {
     this._movieShowcaseContainer = movieShowcaseContainer;
@@ -209,25 +215,26 @@ export default class MovieList {
         this._mostCommentedMoviePresenter);
   }
 
-  _refreshFilmLists(refreshing = `all`) {
-    switch (refreshing) {
-      case `base`:
-        this._refreshBaseFilmList();
-        break;
-      case `extra`:
-        this._refreshTopRaitedFilmList();
-        this._refreshMostCommentedFilmList();
-        break;
-      case `top-raited`:
-        this._refreshTopRaitedFilmList();
-        break;
-      case `most-commented`:
-        this._refreshMostCommentedFilmList();
-        break;
-      default:
+  _refreshFilmLists(refreshingTarget = RefreshingTarget.ALL) {
+    switch (refreshingTarget) {
+      case RefreshingTarget.ALL:
         this._refreshBaseFilmList();
         this._refreshTopRaitedFilmList();
         this._refreshMostCommentedFilmList();
+        break;
+      case RefreshingTarget.BASE:
+        this._refreshBaseFilmList();
+        break;
+      case RefreshingTarget.EXTRA:
+        this._refreshTopRaitedFilmList();
+        this._refreshMostCommentedFilmList();
+        break;
+      case RefreshingTarget.TOP_RAITED:
+        this._refreshTopRaitedFilmList();
+        break;
+      case RefreshingTarget.MOST_COMMENTED:
+        this._refreshMostCommentedFilmList();
+        break;
     }
   }
 
@@ -242,8 +249,8 @@ export default class MovieList {
   }
 
   _handleFilmChange(updatedFilm) {
-    this._movieShowcaseFilms = updateItem(this._movieShowcaseFilms, updatedFilm);
-    this._sourcedMovieShowcaseFilms = updateItem(this._sourcedMovieShowcaseFilms, updatedFilm);
+    this._movieShowcaseFilms = MovieList.updateItem(this._movieShowcaseFilms, updatedFilm);
+    this._sourcedMovieShowcaseFilms = MovieList.updateItem(this._sourcedMovieShowcaseFilms, updatedFilm);
     if (Object.keys(this._baseMoviePresenter).includes(updatedFilm.id)) {
       this._baseMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
     }
@@ -278,5 +285,19 @@ export default class MovieList {
       this._showMoreButtonComponent.element.remove();
       this._showMoreButtonComponent.removeElement();
     }
+  }
+
+  static updateItem(items, updatedItem) {
+    const index = items.findIndex((item) => item.id === updatedItem.id);
+
+    if (index === -1) {
+      return items;
+    }
+
+    return [
+      ...items.slice(0, index),
+      updatedItem,
+      ...items.slice(index + 1)
+    ];
   }
 }

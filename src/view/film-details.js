@@ -3,6 +3,13 @@ import {createElement, replace} from "../utils/render";
 import {isEscKeyPressed, isEnterKeyPressed, isCtrlKeyPressed} from "../utils/common";
 import AbstractView from "./abstract";
 
+const Emoji = {
+  SMILE: `smile`,
+  SLEEPING: `sleeping`,
+  PUKE: `puke`,
+  ANGRY: `angry`,
+};
+
 const createNewCommentTemplate = (newComment) => {
   let {text, checkedEmoji} = newComment;
 
@@ -16,16 +23,16 @@ const createNewCommentTemplate = (newComment) => {
     selectedEmojiImage = `<img src="images/emoji/${checkedEmoji}.png"
       width="55" height="55" alt="emoji-${checkedEmoji}">`;
     switch (checkedEmoji) {
-      case `smile`:
+      case Emoji.SMILE:
         emojiSmileIsChecked = true;
         break;
-      case `sleeping`:
+      case Emoji.SLEEPING:
         emojiSleepingIsChecked = true;
         break;
-      case `puke`:
+      case Emoji.PUKE:
         emojiPukeIsChecked = true;
         break;
-      case `angry`:
+      case Emoji.ANGRY:
         emojiAngryIsChecked = true;
         break;
     }
