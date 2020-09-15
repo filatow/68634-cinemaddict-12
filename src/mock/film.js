@@ -39,12 +39,8 @@ const generateRating = () => {
 
 const generateDuration = () => {
   const durationInMinutes = getRandomInteger(30, 150);
-  const wholeHours = Math.floor(durationInMinutes / 60);
-  return (
-    wholeHours
-      ? wholeHours + `h ` + (durationInMinutes - (wholeHours * 60)) + `m`
-      : durationInMinutes + `m`
-  );
+
+  return durationInMinutes;
 };
 
 const generateGenres = () => {

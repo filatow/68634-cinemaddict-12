@@ -1,15 +1,28 @@
-export const humanizeFilmReleaseDate = (dueDate) => {
-  return dueDate.toLocaleString(`en-GB`, {day: `2-digit`, month: `long`, year: `numeric`});
+import moment from "moment";
+
+export const formatFilmReleaseDate = (dueDate) => {
+  if (!(dueDate instanceof Date)) {
+    return ``;
+  }
+
+  return moment(dueDate).format(`DD MMMM YYYY`);
 };
 
-export const humanizeCommentPostDate = (dueDate) => {
-  const year = dueDate.getFullYear();
-  const month = dueDate.getMonth();
-  const date = dueDate.getDate();
-  const hours = dueDate.getHours();
-  const minutes = dueDate.getMinutes();
+export const formatCommentPostDate = (dueDate) => {
+  if (!(dueDate instanceof Date)) {
+    return ``;
+  }
 
-  return `${year}/${month}/${date} ${hours}:${minutes}`;
+  return moment(dueDate).format(`YYYY/MM/DD HH:mm`);
+};
+
+export const formatFilmDuration = (durationInMinutes) => {
+  const wholeHours = Math.floor(durationInMinutes / 60);
+  return (
+    wholeHours
+      ? wholeHours + `h ` + (durationInMinutes - (wholeHours * 60)) + `m`
+      : durationInMinutes + `m`
+  );
 };
 
 export const getFilmsSortedByRating = (films) => {
