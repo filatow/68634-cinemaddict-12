@@ -5,6 +5,14 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+export const guid = () => {
+  return `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
+    .replace(/[xy]/g, (c) => {
+      let r = (Math.random() * 16) | 0; let v = c === `x` ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+};
+
 export const isEscKeyPressed = (event) => {
   return (event.key === `Escape` || event.key === `Esc`);
 };
@@ -15,19 +23,4 @@ export const isEnterKeyPressed = (event) => {
 
 export const isCtrlKeyPressed = (event) => {
   return (event.key === `Control`);
-};
-
-export const updateItem = (items, updatedItem) => {
-  const index = items.findIndex((item) => item.id === updatedItem.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    updatedItem,
-    ...items.slice(index + 1)
-  ];
-
 };

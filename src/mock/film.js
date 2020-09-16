@@ -1,5 +1,4 @@
-import {getRandomInteger} from "../utils/common";
-import {nanoid} from "../utils/nanoid";
+import {getRandomInteger, guid} from "../utils/common";
 import {LOREM_IPSUM, FILM_GENRES} from "../consts";
 import {generateComment} from "./comment";
 
@@ -32,7 +31,7 @@ const generatePoster = () => {
   return `images/posters/` + posters[getRandomInteger(0, posters.length - 1)];
 };
 
-const generateId = () => nanoid(12);
+const generateId = () => guid();
 
 const generateRating = () => {
   return String((getRandomInteger(40, 100) / 10));
@@ -40,12 +39,8 @@ const generateRating = () => {
 
 const generateDuration = () => {
   const durationInMinutes = getRandomInteger(30, 150);
-  const wholeHours = Math.floor(durationInMinutes / 60);
-  return (
-    wholeHours
-      ? wholeHours + `h ` + (durationInMinutes - (wholeHours * 60)) + `m`
-      : durationInMinutes + `m`
-  );
+
+  return durationInMinutes;
 };
 
 const generateGenres = () => {

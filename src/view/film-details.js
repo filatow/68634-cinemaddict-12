@@ -1,7 +1,14 @@
-import {humanizeFilmReleaseDate, humanizeCommentPostDate} from "../utils/films";
+import {formatFilmReleaseDate, formatCommentPostDate, formatFilmDuration} from "../utils/films";
 import {createElement, replace} from "../utils/render";
 import {isEscKeyPressed, isEnterKeyPressed, isCtrlKeyPressed} from "../utils/common";
 import AbstractView from "./abstract";
+
+const Emoji = {
+  SMILE: `smile`,
+  SLEEPING: `sleeping`,
+  PUKE: `puke`,
+  ANGRY: `angry`,
+};
 
 const createNewCommentTemplate = (newComment) => {
   let {text, checkedEmoji} = newComment;
@@ -16,16 +23,16 @@ const createNewCommentTemplate = (newComment) => {
     selectedEmojiImage = `<img src="images/emoji/${checkedEmoji}.png"
       width="55" height="55" alt="emoji-${checkedEmoji}">`;
     switch (checkedEmoji) {
-      case `smile`:
+      case Emoji.SMILE:
         emojiSmileIsChecked = true;
         break;
-      case `sleeping`:
+      case Emoji.SLEEPING:
         emojiSleepingIsChecked = true;
         break;
-      case `puke`:
+      case Emoji.PUKE:
         emojiPukeIsChecked = true;
         break;
-      case `angry`:
+      case Emoji.ANGRY:
         emojiAngryIsChecked = true;
         break;
     }
@@ -77,7 +84,7 @@ const createFilmDetailsTemplate = (data) => {
     ageLimitation, isWatchlisted, isWatched,
     isFavorite, newComment} = data;
 
-  const filmReleaseDate = humanizeFilmReleaseDate(releaseDate);
+  const filmReleaseDate = formatFilmReleaseDate(releaseDate);
   const filmGenres = genres
     .map((genre) => `<span class="film-details__genre">${genre}</span>`)
     .join(` `);
@@ -92,6 +99,7 @@ const createFilmDetailsTemplate = (data) => {
     : ``;
   const filmWriters = writers.join(`, `);
   const filmActors = actors.join(`, `);
+  const filmRuntime = formatFilmDuration(duration);
 
   const filmComments = comments.map((comment) => {
     const emojiSource = comment.emoji;
@@ -99,7 +107,7 @@ const createFilmDetailsTemplate = (data) => {
     const emojiName = emojiSource.replace(re, ``);
     const message = comment.message;
     const author = comment.author;
-    const date = humanizeCommentPostDate(comment.date);
+    const date = formatCommentPostDate(comment.date);
 
     return `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -166,7 +174,7 @@ const createFilmDetailsTemplate = (data) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${duration}</td>
+                <td class="film-details__cell">${filmRuntime}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
