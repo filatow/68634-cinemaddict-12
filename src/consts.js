@@ -19,4 +19,10 @@ export const SortType = {
   DATE: `date`,
   RAITING: `raiting`
 };
-
+export const RefreshingTarget = {
+  ALL: `all`,
+  BASE: `base`,
+  EXTRA: `extra`,
+  TOP_RAITED: `top-raited`,
+  MOST_COMMENTED: `most-commented`,
+};

@@ -6,7 +6,7 @@ import {generateFilter} from "./mock/filter";
 import {generateFilmsAmount} from "./mock/films-amount";
 import {FilmCount} from "./consts";
 import {render, RenderPosition} from "./utils/render";
-import MovieListPresenter from "./presenter/movie-list";
+import MovieShowcasePresenter from "./presenter/movie-showcase";
 import MoviesModel from "./model/movies";
 
 
@@ -22,7 +22,7 @@ const siteFooterElement = document.querySelector(`.footer`);
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 
 
-const movieListPresenter = new MovieListPresenter(siteMainElement, moviesModel);
+const movieListPresenter = new MovieShowcasePresenter(siteMainElement, moviesModel);
 
 
 render(siteHeaderElement, new UserRankView(), RenderPosition.BEFOREEND);
@@ -30,4 +30,5 @@ render(footerStatisticsElement, new FilmsAmountView(generateFilmsAmount()), Rend
 render(siteMainElement, new FilterMenuView(filters), RenderPosition.BEFOREEND);
 
 
-movieListPresenter.init(films, siteFooterElement);
+// movieListPresenter.init(films, siteFooterElement);
+movieListPresenter.init(siteFooterElement);

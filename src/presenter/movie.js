@@ -1,6 +1,7 @@
 import FilmCardView from "../view/film-card";
 import FilmDetailsView from "../view/film-details";
 import {render, replace, remove, RenderPosition} from "../utils/render";
+import {RefreshingTarget} from "../consts";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -92,7 +93,7 @@ export default class Movie {
     const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
 
     this._changeFilmData(film);
-    this._refreshFilmLists(`most-commented`);
+    this._refreshFilmLists(RefreshingTarget.MOST_COMMENTED);
     this._showFilmDetailsPopup();
 
     this._filmDetailsComponent.element.scrollTop = popupScrollTop;
