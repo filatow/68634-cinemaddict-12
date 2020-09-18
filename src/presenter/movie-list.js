@@ -1,4 +1,4 @@
-import SiteMenuView from "../view/site-menu";
+// import FilterMenuView from "../view/filter-menu";
 import SortingView from "../view/sorting";
 import FilmsSectionView from "../view/films-section";
 import NoFilmView from "../view/no-film";
@@ -21,14 +21,14 @@ const RefreshingTarget = {
   MOST_COMMENTED: `most-commented`,
 };
 export default class MovieList {
-  constructor(movieShowcaseContainer, filters) {
+  constructor(movieShowcaseContainer, moviesModel) {
     this._movieShowcaseContainer = movieShowcaseContainer;
+    this._moviesModel = moviesModel;
     this._currentSortType = SortType.DEFAULT;
     this._baseMoviePresenter = {};
     this._topRaitedMoviePresenter = {};
     this._mostCommentedMoviePresenter = {};
 
-    this._siteMenuComponent = new SiteMenuView(filters);
     this._sortingComponent = new SortingView();
     this._showcaseSectionComponent = new FilmsSectionView();
     this._noFilmComponent = new NoFilmView();
@@ -62,15 +62,14 @@ export default class MovieList {
     this._movieShowcaseFilms = movieShowcaseFilms.slice();
     this._sourcedMovieShowcaseFilms = movieShowcaseFilms.slice();
 
-    this._renderSiteMenu();
     this._renderSorting();
     this._renderFilmSection();
 
     this._renderMovieShowcase();
   }
 
-  _renderSiteMenu() {
-    render(this._movieShowcaseContainer, this._siteMenuComponent, RenderPosition.BEFOREEND);
+  _getFilms() {
+    return this._moviesModel.getMovies();
   }
 
   _sortFilms(sortType) {

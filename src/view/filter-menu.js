@@ -9,7 +9,7 @@ const createFilterTemplate = (filter, index) => {
     : `<a href="#${name}" class="main-navigation__item main-navigation__item--active">All movies</a>`;
 };
 
-const createSiteMenuTemplate = (filters) => {
+const createFilterMenuTemplate = (filters) => {
 
   const filtersTemplate = filters
     .map((filter, index) => createFilterTemplate(filter, index))
@@ -25,13 +25,13 @@ const createSiteMenuTemplate = (filters) => {
   );
 };
 
-export default class SiteMenu extends AbstractView {
+export default class FilterMenu extends AbstractView {
   constructor(filters) {
     super();
     this._filters = filters;
   }
 
   _getTemplate() {
-    return createSiteMenuTemplate(this._filters);
+    return createFilterMenuTemplate(this._filters);
   }
 }
