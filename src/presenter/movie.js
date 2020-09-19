@@ -1,7 +1,8 @@
 import FilmCardView from "../view/film-card";
 import FilmDetailsView from "../view/film-details";
 import {render, replace, remove, RenderPosition} from "../utils/render";
-import {RefreshingTarget} from "../consts";
+// import {RefreshingTarget} from "../consts";
+import {ActionOnMovie, ActionOnComment, UpdateType} from "../consts.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -9,11 +10,10 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(filmListContainer, changeFilmData, refreshFilmLists, changeViewMode) {
+  constructor(filmListContainer, changeFilmData, changeViewMode) {
     this._filmListContainer = filmListContainer;
     this._changeFilmData = changeFilmData;
     this._changeViewMode = changeViewMode;
-    this._refreshFilmLists = refreshFilmLists;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
@@ -93,7 +93,7 @@ export default class Movie {
     const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
 
     this._changeFilmData(film);
-    this._refreshFilmLists(RefreshingTarget.MOST_COMMENTED);
+    // this._refreshFilmLists(RefreshingTarget.MOST_COMMENTED);
     this._showFilmDetailsPopup();
 
     this._filmDetailsComponent.element.scrollTop = popupScrollTop;
@@ -108,6 +108,8 @@ export default class Movie {
 
   _handleFavoriteClick() {
     this._changeFilmData(
+        ActionOnMovie.UPDATE,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -120,6 +122,8 @@ export default class Movie {
 
   _handleWatchedClick() {
     this._changeFilmData(
+        ActionOnMovie.UPDATE,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -132,6 +136,8 @@ export default class Movie {
 
   _handleWatchlistClick() {
     this._changeFilmData(
+        ActionOnMovie.UPDATE,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,

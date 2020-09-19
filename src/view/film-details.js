@@ -102,6 +102,8 @@ const createFilmDetailsTemplate = (data) => {
   const filmRuntime = formatFilmDuration(duration);
 
   const filmComments = comments.map((comment) => {
+    // console.log(`comment = `, comment);
+
     const emojiSource = comment.emoji;
     const re = /images\/emoji\/|\\.png/;
     const emojiName = emojiSource.replace(re, ``);

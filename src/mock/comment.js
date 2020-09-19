@@ -1,4 +1,6 @@
-import {getRandomInteger} from "../utils/common";
+import {getRandomInteger, guid} from "../utils/common";
+
+const generateId = () => guid();
 
 const generateEmoji = () => {
   const emojiSources = [
@@ -50,6 +52,7 @@ const generateDate = () => {
 
 export const generateComment = () => {
   return {
+    id: generateId(),
     emoji: generateEmoji(),
     date: generateDate(),
     author: generateAuthor(),

@@ -26,3 +26,16 @@ export const RefreshingTarget = {
   TOP_RAITED: `top-raited`,
   MOST_COMMENTED: `most-commented`,
 };
+export const ActionOnMovie = {
+  // ADD: `ADD_MOVIE`,
+  UPDATE: `UPDATE_MOVIE`,
+  // DELETE: `DELETE_MOVIE`
+};
+export const ActionOnComment = {
+  ADD: `ADD_COMMENT`,
+  DELETE: `DELETE_COMMENT`
+};
+export const UpdateType = {
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
