@@ -4,7 +4,6 @@ export const formatFilmReleaseDate = (dueDate) => {
   if (!(dueDate instanceof Date)) {
     return ``;
   }
-
   return moment(dueDate).format(`DD MMMM YYYY`);
 };
 

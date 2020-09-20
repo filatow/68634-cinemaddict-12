@@ -1,18 +1,23 @@
 import AbstractView from "./abstract";
+import {FilterType} from "../consts";
 
-const createFilterTemplate = (filter, index) => {
-  const {name, count} = filter;
-  const label = name.substring(0, 1).toUpperCase() + name.substring(1);
+const createFilterTemplate = (filter, currentFilterType) => {
+  const {type, name, count} = filter;
 
-  return index !== 0
-    ? `<a href="#${name}" class="main-navigation__item">${label} <span class="main-navigation__item-count">${count}</span></a>`
-    : `<a href="#${name}" class="main-navigation__item main-navigation__item--active">All movies</a>`;
+  return (
+    `<a href="#${type}"
+      class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}"
+      data-type="${type}">
+      ${name}
+      ${type !== FilterType.ALL ? `<span class="main-navigation__item-count">${count}</span>` : ``}
+    </a>`
+  );
 };
 
-const createFilterMenuTemplate = (filters) => {
+const createFilterMenuTemplate = (filters, currentFilterType) => {
 
   const filtersTemplate = filters
-    .map((filter, index) => createFilterTemplate(filter, index))
+    .map((filter) => createFilterTemplate(filter, currentFilterType))
     .join(``);
 
   return (
@@ -26,12 +31,27 @@ const createFilterMenuTemplate = (filters) => {
 };
 
 export default class FilterMenu extends AbstractView {
-  constructor(filters) {
+  constructor(filters, currentFilterType) {
     super();
     this._filters = filters;
+    this._currentFilterType = currentFilterType;
+
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   _getTemplate() {
-    return createFilterMenuTemplate(this._filters);
+    return createFilterMenuTemplate(this._filters, this._currentFilterType);
+  }
+
+  _filterTypeChangeHandler(event) {
+    event.preventDefault();
+    if (event.target.dataset.type) {
+      this._callback.filterTypeChange(event.target.dataset.type);
+    }
+  }
+
+  setFilterTypeChangeHandler(callback) {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener(`click`, this._filterTypeChangeHandler);
   }
 }

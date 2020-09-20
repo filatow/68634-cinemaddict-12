@@ -1,8 +1,8 @@
 import FilmCardView from "../view/film-card";
 import FilmDetailsView from "../view/film-details";
 import {render, replace, remove, RenderPosition} from "../utils/render";
-// import {RefreshingTarget} from "../consts";
-import {ActionOnMovie, ActionOnComment, UpdateType} from "../consts.js";
+// import {ActionOnComment} from "../consts";
+import {ActionOnMovie, UpdateType} from "../consts";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -10,10 +10,11 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(filmListContainer, changeFilmData, changeViewMode) {
+  constructor(filmListContainer, changeFilmData, changeViewMode, commentsModel) {
     this._filmListContainer = filmListContainer;
     this._changeFilmData = changeFilmData;
     this._changeViewMode = changeViewMode;
+    this._commentsModel = commentsModel;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
@@ -32,13 +33,14 @@ export default class Movie {
 
   init(film, popupContainer) {
     this._film = film;
+    this._comments = this._getCommments();
     this._popupContainer = popupContainer;
 
     const prevFilmCardComponent = this._filmCardComponent;
     const prevFilmDetailsComponent = this._filmDetailsComponent;
 
     this._filmCardComponent = new FilmCardView(this._film);
-    this._filmDetailsComponent = new FilmDetailsView(this._film);
+    this._filmDetailsComponent = new FilmDetailsView(this._film, this._comments);
 
     this._filmCardComponent.setToDetailsClickHandler(this._handleToDetailsClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -78,14 +80,41 @@ export default class Movie {
     }
   }
 
-  _showFilmDetailsPopup() {
+  getFilmDetailsPopupScrollTop() {
+    if (this._filmDetailsComponent !== null) {
+      return this._filmDetailsComponent.element.scrollTop;
+    }
+
+    return 0;
+  }
+
+  showFilmDetailsPopup(popupScrollTop = null) {
+    this._showPopup();
+
+    if (popupScrollTop !== null) {
+      this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+    }
+  }
+
+  _getCommments() {
+    let comments = this._commentsModel.getComments();
+    comments = comments.filter((comment) => {
+      return this._film.comments.includes(comment.id);
+    });
+
+    return comments;
+  }
+
+  _showPopup() {
     this._popupContainer.appendChild(this._filmDetailsComponent.element);
     this._filmDetailsComponent.setViewingPopupHandler(this._handleViewingPopup);
+
+    this._mode = Mode.DETAILED;
   }
 
   _handleToDetailsClick() {
     this._changeViewMode();
-    this._showFilmDetailsPopup();
+    this._showPopup();
     this._mode = Mode.DETAILED;
   }
 
@@ -93,8 +122,7 @@ export default class Movie {
     const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
 
     this._changeFilmData(film);
-    // this._refreshFilmLists(RefreshingTarget.MOST_COMMENTED);
-    this._showFilmDetailsPopup();
+    this._showPopup();
 
     this._filmDetailsComponent.element.scrollTop = popupScrollTop;
   }
@@ -106,10 +134,11 @@ export default class Movie {
     }
   }
 
-  _handleFavoriteClick() {
+  // обработчик клика по кнопке favirite
+  _handleFavoriteClick(updateType = UpdateType.MINOR) {
     this._changeFilmData(
         ActionOnMovie.UPDATE,
-        UpdateType.MINOR,
+        updateType,
         Object.assign(
             {},
             this._film,
@@ -119,11 +148,11 @@ export default class Movie {
         )
     );
   }
-
-  _handleWatchedClick() {
+  // обработчик клика по кнопке watched
+  _handleWatchedClick(updateType = UpdateType.MINOR) {
     this._changeFilmData(
         ActionOnMovie.UPDATE,
-        UpdateType.MINOR,
+        updateType,
         Object.assign(
             {},
             this._film,
@@ -134,10 +163,11 @@ export default class Movie {
     );
   }
 
-  _handleWatchlistClick() {
+  // обработчик клика по кнопке watchlist
+  _handleWatchlistClick(updateType = UpdateType.MINOR) {
     this._changeFilmData(
         ActionOnMovie.UPDATE,
-        UpdateType.MINOR,
+        updateType,
         Object.assign(
             {},
             this._film,
@@ -148,25 +178,19 @@ export default class Movie {
     );
   }
 
+  // обработчик клика по кнопке favirite в popup'е
   _handlePopupFavoriteClick() {
-    const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
-    this._handleFavoriteClick();
-    this._showFilmDetailsPopup();
-    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+    this._handleFavoriteClick(UpdateType.MINOR_AND_POPUP);
   }
 
+  // обработчик клика по кнопке watched в popup'е
   _handlePopupWatchedClick() {
-    const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
-    this._handleWatchedClick();
-    this._showFilmDetailsPopup();
-    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+    this._handleWatchedClick(UpdateType.MINOR_AND_POPUP);
   }
 
+  // обработчик клика по кнопке watchlist в popup'е
   _handlePopupWatchlistClick() {
-    const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
-    this._handleWatchlistClick();
-    this._showFilmDetailsPopup();
-    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+    this._handleWatchlistClick(UpdateType.MINOR_AND_POPUP);
   }
 
 }

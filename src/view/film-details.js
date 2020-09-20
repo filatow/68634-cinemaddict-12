@@ -102,8 +102,6 @@ const createFilmDetailsTemplate = (data) => {
   const filmRuntime = formatFilmDuration(duration);
 
   const filmComments = comments.map((comment) => {
-    // console.log(`comment = `, comment);
-
     const emojiSource = comment.emoji;
     const re = /images\/emoji\/|\\.png/;
     const emojiName = emojiSource.replace(re, ``);
@@ -183,7 +181,7 @@ const createFilmDetailsTemplate = (data) => {
                 <td class="film-details__cell">${country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${genres.length > 1 ? `Genres` : `Genre`}</td>
                 <td class="film-details__cell">
                   ${filmGenres}
                   </td>
@@ -225,10 +223,10 @@ const createFilmDetailsTemplate = (data) => {
 };
 
 export default class FilmDetails extends AbstractView {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._film = film;
-    this._data = FilmDetails.parseFilmToData(film);
+    this._data = FilmDetails.parseFilmToData(film, comments);
 
     this._closeDetailsHandler = this._closeDetailsHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -365,10 +363,13 @@ export default class FilmDetails extends AbstractView {
     document.removeEventListener(`keydown`, this._viewingPopupHandler);
   }
 
-  static parseFilmToData(film) {
-    return Object.assign(
+  static parseFilmToData(film, filmComments) {
+    const data = Object.assign(
         {},
         film,
+        {
+          comments: filmComments
+        },
         {
           newComment: {
             text: ``,
@@ -377,6 +378,8 @@ export default class FilmDetails extends AbstractView {
           }
         }
     );
+
+    return data;
   }
 
   static parseDataToFilm(dataForParsing) {

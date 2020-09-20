@@ -37,5 +37,12 @@ export const ActionOnComment = {
 };
 export const UpdateType = {
   MINOR: `MINOR`,
+  MINOR_AND_POPUP: `MINOR_AND_POPUP`,
   MAJOR: `MAJOR`
+};
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`,
 };
