@@ -4,12 +4,12 @@ const generateId = () => guid();
 
 const generateEmoji = () => {
   const emojiSources = [
-    `angry.png`,
-    `puke.png`,
-    `sleeping.png`,
-    `smile.png`,
+    `angry`,
+    `puke`,
+    `sleeping`,
+    `smile`,
   ];
-  return `images/emoji/` + emojiSources[getRandomInteger(0, emojiSources.length - 1)];
+  return emojiSources[getRandomInteger(0, emojiSources.length - 1)];
 };
 
 const generateAuthor = () => {
@@ -53,9 +53,9 @@ const generateDate = () => {
 export const generateComment = () => {
   return {
     id: generateId(),
-    emoji: generateEmoji(),
-    date: generateDate(),
     author: generateAuthor(),
-    message: generateMessage(),
+    comment: generateMessage(),
+    date: generateDate(),
+    emotion: generateEmoji(),
   };
 };

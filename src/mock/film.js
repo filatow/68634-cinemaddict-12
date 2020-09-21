@@ -81,7 +81,7 @@ const generateDirector = () => {
     `Sergio Leone`,
     `Álex de la Iglesia`,
   ];
-  return directors[getRandomInteger(0, directors.length)];
+  return directors[getRandomInteger(0, directors.length - 1)];
 };
 
 const generateWriters = () => {
@@ -159,7 +159,7 @@ const generateAgeLimitation = () => {
 };
 
 const generateComments = () => {
-  return new Array(getRandomInteger(1, 5)).fill().map(generateComment);
+  return new Array(getRandomInteger(1, 10)).fill().map(generateComment);
 };
 
 const generateReleaseDate = () => {

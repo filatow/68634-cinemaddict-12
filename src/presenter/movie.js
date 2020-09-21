@@ -10,15 +10,16 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(filmListContainer, changeFilmData, changeViewMode, commentsModel) {
+  constructor(filmListContainer, handleViewAction, changeViewMode, commentsModel) {
     this._filmListContainer = filmListContainer;
-    this._changeFilmData = changeFilmData;
+    this._changeModelData = handleViewAction;
     this._changeViewMode = changeViewMode;
     this._commentsModel = commentsModel;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
     this._mode = Mode.DEFAULT;
+    // this._popupScrollTop = 0;
 
     this._handleToDetailsClick = this._handleToDetailsClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -27,14 +28,17 @@ export default class Movie {
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handlePopupWatchedClick = this._handlePopupWatchedClick.bind(this);
     this._handlePopupWatchlistClick = this._handlePopupWatchlistClick.bind(this);
-    this._handleViewingPopup = this._handleViewingPopup.bind(this);
+    this._handleCommentListModification = this._handleCommentListModification.bind(this);
     this._handleCloseDetails = this._handleCloseDetails.bind(this);
+    // this._saveFilmDetailsPopupScrollTop = this._saveFilmDetailsPopupScrollTop.bind(this);
+
   }
 
   init(film, popupContainer) {
     this._film = film;
-    this._comments = this._getCommments();
     this._popupContainer = popupContainer;
+    this._comments = this._getComments();
+
 
     const prevFilmCardComponent = this._filmCardComponent;
     const prevFilmDetailsComponent = this._filmDetailsComponent;
@@ -80,24 +84,36 @@ export default class Movie {
     }
   }
 
-  getFilmDetailsPopupScrollTop() {
-    if (this._filmDetailsComponent !== null) {
-      return this._filmDetailsComponent.element.scrollTop;
-    }
+  // _saveFilmDetailsPopupScrollTop() {
+  //   this._popupScrollTop = this._filmDetailsComponent.element.scrollTop;
+  // }
 
-    return 0;
+  // возвращает значение прокрутки
+  getFilmDetailsPopupScrollTop() {
+    // this._saveFilmDetailsPopupScrollTop();
+    // return this._popupScrollTop;
+    return this._filmDetailsComponent.element.scrollTop;
   }
 
-  showFilmDetailsPopup(popupScrollTop = null) {
+  // показывает попап
+  // showFilmDetailsPopup() {
+  //   this._showPopup();
+  //   this._filmDetailsComponent.element.scrollTop = this._popupScrollTop;
+  // }
+  showFilmDetailsPopup(popupScrollTop = this._popupScrollTop) {
     this._showPopup();
 
-    if (popupScrollTop !== null) {
-      this._filmDetailsComponent.element.scrollTop = popupScrollTop;
-    }
+    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+    // if (popupScrollTop !== null) {
+    // }
   }
 
-  _getCommments() {
-    let comments = this._commentsModel.getComments();
+  // получаем комментарии из модели комментариев
+  // фильтруем им по id конкретного фильма и возвращаем из функции
+  _getComments() {
+    let comments = this._commentsModel.getComments().slice();
+
+
     comments = comments.filter((comment) => {
       return this._film.comments.includes(comment.id);
     });
@@ -105,30 +121,31 @@ export default class Movie {
     return comments;
   }
 
+  // показ попапа с подробной информацией о фильме
   _showPopup() {
     this._popupContainer.appendChild(this._filmDetailsComponent.element);
-    this._filmDetailsComponent.setViewingPopupHandler(this._handleViewingPopup);
+    this._filmDetailsComponent.setViewingPopupHandler(this._handleCommentListModification);
 
     this._mode = Mode.DETAILED;
   }
 
+  // обработчик при переходе к попапу любым из возможных способов
   _handleToDetailsClick() {
     this._changeViewMode();
     this._showPopup();
     this._mode = Mode.DETAILED;
   }
 
-  _handleViewingPopup(film) {
-    const popupScrollTop = this._filmDetailsComponent.element.scrollTop;
-
-    this._changeFilmData(film);
-    this._showPopup();
-
-    this._filmDetailsComponent.element.scrollTop = popupScrollTop;
+  _handleCommentListModification(actionType, movie, comment) {
+    this._changeModelData(
+        actionType,
+        UpdateType.MINOR_AND_POPUP,
+        movie, comment); // *
   }
 
   _handleCloseDetails() {
     if (this._popupContainer.contains(this._filmDetailsComponent.element)) {
+      // this._saveFilmDetailsPopupScrollTop();
       this._popupContainer.removeChild(this._filmDetailsComponent.element);
       this._mode = Mode.DEFAULT;
     }
@@ -136,7 +153,7 @@ export default class Movie {
 
   // обработчик клика по кнопке favirite
   _handleFavoriteClick(updateType = UpdateType.MINOR) {
-    this._changeFilmData(
+    this._changeModelData(
         ActionOnMovie.UPDATE,
         updateType,
         Object.assign(
@@ -150,7 +167,7 @@ export default class Movie {
   }
   // обработчик клика по кнопке watched
   _handleWatchedClick(updateType = UpdateType.MINOR) {
-    this._changeFilmData(
+    this._changeModelData(
         ActionOnMovie.UPDATE,
         updateType,
         Object.assign(
@@ -165,7 +182,7 @@ export default class Movie {
 
   // обработчик клика по кнопке watchlist
   _handleWatchlistClick(updateType = UpdateType.MINOR) {
-    this._changeFilmData(
+    this._changeModelData(
         ActionOnMovie.UPDATE,
         updateType,
         Object.assign(

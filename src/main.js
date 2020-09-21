@@ -15,8 +15,8 @@ const filmsWithComments = new Array(FilmCount.FOR_FILMLIST).fill().map(generateF
 
 
 const commentsForModel = [];
-const films = JSON.parse(JSON.stringify(filmsWithComments)); // глубокое клонирование объекта
-films.forEach((film) => {
+const films = JSON.parse(JSON.stringify(filmsWithComments)); // клонирование объекта
+films.forEach((film) => { // временный код, пока нет реальных данных
   film.comments =
     film.comments.reduce((accumulator, comment) => {
       comment.date = new Date(comment.date);
@@ -30,7 +30,6 @@ films.forEach((film) => {
 });
 
 const moviesModel = new MoviesModel();
-// moviesModel.setMovies(filmsWithComments);
 moviesModel.setMovies(films);
 const commentsModel = new CommentsModel();
 commentsModel.setComments(commentsForModel);

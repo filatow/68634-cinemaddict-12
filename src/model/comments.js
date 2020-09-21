@@ -23,21 +23,21 @@ export default class Comments extends Observer {
     this._notify(updateType, update);
   }
 
-  updateComment(updateType, update) {
-    const index = this._comments.findIndex((comment) => comment.id === update.id);
+  // updateComment(updateType, update) {
+  //   const index = this._comments.findIndex((comment) => comment.id === update.id);
 
-    if (index === -1) {
-      throw new Error(`Can't update unexisting comment`);
-    }
+  //   if (index === -1) {
+  //     throw new Error(`Can't update unexisting comment`);
+  //   }
 
-    this._comments = [
-      ...this._comments.slice(0, index),
-      update,
-      ...this._comments.slice(index + 1)
-    ];
+  //   this._comments = [
+  //     ...this._comments.slice(0, index),
+  //     update,
+  //     ...this._comments.slice(index + 1)
+  //   ];
 
-    this._notify(updateType, update);
-  }
+  //   this._notify(updateType, update);
+  // }
 
   deleteComment(updateType, update) {
     const index = this._comments.findIndex((comment) => comment.id === update.id);
@@ -51,6 +51,6 @@ export default class Comments extends Observer {
       ...this._comments.slice(index + 1)
     ];
 
-    this._notify(updateType);
+    this._notify(updateType, update);
   }
 }

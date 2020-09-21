@@ -3,7 +3,7 @@ import {render, RenderPosition, replace, remove} from "../utils/render";
 import {filter} from "../utils/filter";
 import {FilterType, UpdateType} from "../consts";
 
-export default class Filter {
+export default class FilterMenu {
   constructor(filterMenuContainer, filterModel, moviesModel) {
     this._filterMenuContainer = filterMenuContainer;
     this._filterModel = filterModel;

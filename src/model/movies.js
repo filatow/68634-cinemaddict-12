@@ -14,14 +14,14 @@ export default class Movies extends Observer {
     return this._movies;
   }
 
-  addMovie(updateType, update) {
-    this._movies = [
-      update,
-      ...this._movies
-    ];
+  // addMovie(updateType, update) {
+  //   this._movies = [
+  //     update,
+  //     ...this._movies
+  //   ];
 
-    this._notify(updateType, update);
-  }
+  //   this._notify(updateType, update);
+  // }
 
   updateMovie(updateType, update) {
     const index = this._movies.findIndex((movie) => movie.id === update.id);
@@ -39,18 +39,18 @@ export default class Movies extends Observer {
     this._notify(updateType, update);
   }
 
-  deleteMovie(updateType, update) {
-    const index = this._movies.findIndex((movie) => movie.id === update.id);
+  // deleteMovie(updateType, update) {
+  //   const index = this._movies.findIndex((movie) => movie.id === update.id);
 
-    if (index === -1) {
-      throw new Error(`Can't delete unexisting movie`);
-    }
+  //   if (index === -1) {
+  //     throw new Error(`Can't delete unexisting movie`);
+  //   }
 
-    this._movies = [
-      ...this._movies.slice(0, index),
-      ...this._movies.slice(index + 1)
-    ];
+  //   this._movies = [
+  //     ...this._movies.slice(0, index),
+  //     ...this._movies.slice(index + 1)
+  //   ];
 
-    this._notify(updateType, update);
-  }
+  //   this._notify(updateType, update);
+  // }
 }

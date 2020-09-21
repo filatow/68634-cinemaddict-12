@@ -20,6 +20,7 @@ export default class MovieList {
     this._filterModel = filterModel;
     this._commentsModel = commentsModel;
     this._currentSortType = SortType.DEFAULT;
+    this._updatedMovieId = null;
 
     this._baseMoviePresenter = {};
     this._topRaitedMoviePresenter = {};
@@ -44,17 +45,17 @@ export default class MovieList {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleViewModeChange = this._handleViewModeChange.bind(this);
 
-    // this.openFilmPopup = this.openFilmPopup.bind(this); // ?
-
     this._clearFilmListFilmCards = this._clearFilmListFilmCards.bind(this);
     this._renderExtraFilmListFilmCards = this._renderExtraFilmListFilmCards.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init(popupContainer) {
     this._popupContainer = popupContainer;
+    this._popupScrollTop = 0;
     this._renderedFilmCardsCount = FilmCount.PER_STEP;
 
     this._renderMovieShowcase();
@@ -63,9 +64,7 @@ export default class MovieList {
   _getMovies() {
     const currentFilterType = this._filterModel.getFilter();
     const movies = this._moviesModel.getMovies();
-
     const filteredMovies = filter[currentFilterType](movies);
-
 
     switch (this._currentSortType) {
       case SortType.DATE:
@@ -120,14 +119,6 @@ export default class MovieList {
     }
     this._baseMoviePresenter[film.id] = moviePresenter;
   }
-
-  // openFilmPopup(filmId) {
-  //   let neededFilm = this._baseMoviePresenter[filmId];
-  //   if (neededFilm) {
-  //     neededFilm._showFilmDetailsPopup();
-  //   }
-  //   // добавить поиск в других презенрерах
-  // }
 
   _renderFilmCards(filmListContainer, filmCards, extraMoviePresenter = null) {
     filmCards.forEach((filmCard) => this._renderFilmCard(filmListContainer, filmCard, extraMoviePresenter));
@@ -244,7 +235,6 @@ export default class MovieList {
   _clearMovieShowcase({resetRenderedFilmCardsCount = false, resetSortType = false} = {}) {
     const moviesCount = this._getMovies().length;
 
-    //
     this._clearFilmListFilmCards(this._baseMoviePresenter);
     remove(this._baseFilmsListSectionComponent);
     remove(this._baseFilmsListContainerComponent);
@@ -256,12 +246,11 @@ export default class MovieList {
     this._clearFilmListFilmCards(this._mostCommentedMoviePresenter);
     remove(this._filmsListMostCommentedSectionComponent);
     remove(this._filmsListMostCommentedContainerComponent);
-    //
+
     remove(this._sortingComponent);
     remove(this._showcaseSectionComponent);
     remove(this._noFilmComponent);
     remove(this._showMoreButtonComponent);
-    //
 
     if (resetRenderedFilmCardsCount) {
       this._renderedFilmCardsCount = FilmCount.PER_STEP;
@@ -300,57 +289,82 @@ export default class MovieList {
     this._renderMovieShowcase();
   }
 
-  _handleFilmChange(updatedFilm) {
-    if (Object.keys(this._baseMoviePresenter).includes(updatedFilm.id)) {
-      this._baseMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
-    }
-    if (Object.keys(this._topRaitedMoviePresenter).includes(updatedFilm.id)) {
-      this._topRaitedMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
-    }
-    if (Object.keys(this._mostCommentedMoviePresenter).includes(updatedFilm.id)) {
-      this._mostCommentedMoviePresenter[updatedFilm.id].init(updatedFilm, this._popupContainer);
-    }
-  }
-
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, updatedMovie, updatedComment = null) {
+    this._updatedMovieId = updatedMovie.id;
     switch (actionType) {
       case ActionOnMovie.UPDATE:
-        this._moviesModel.updateMovie(updateType, update);
+        this._moviesModel.updateMovie(updateType, updatedMovie);
+        this._updatedMovieId = null;
         break;
       case ActionOnComment.ADD:
-        this._commentsModel.addComment(updateType, update);
+        if (updatedComment === null) {
+          throw new Error(`'updatedComment' parameter did not set`);
+        }
+        this._moviesModel.updateMovie(updateType, updatedMovie); // в результате инициирует вызов _handleModelEvent с теми же параметрами
+        this._commentsModel.addComment(updateType, updatedComment); // в результате инициирует вызов _handleModelEvent с теми же параметрами
         break;
       case ActionOnComment.DELETE:
-        this._commentsModel.deleteComment(updateType, update);
+        if (updatedComment === null) {
+          throw new Error(`'updatedComment' parameter did not set`);
+        }
+        this._moviesModel.updateMovie(updateType, updatedMovie);
+        this._commentsModel.deleteComment(updateType, updatedComment);
         break;
     }
+    this._updatedMovieId = null;
   }
 
-  _handleModelEvent(updateType, data) {
+  // _handleModelEvent(updateType, data) { // в data может быть как фильм, так и комментарий
+  _handleModelEvent(updateType) {
     switch (updateType) {
       case UpdateType.MINOR:
         this._clearMovieShowcase();
         this._renderMovieShowcase();
         break;
       case UpdateType.MINOR_AND_POPUP:
-        let neededPresenter;
-        if (this._baseMoviePresenter[data.id]) {
-          neededPresenter = this._baseMoviePresenter;
-        } else if (this._topRaitedMoviePresenter[data.id]) {
-          neededPresenter = this._topRaitedMoviePresenter;
-        } else {
-          neededPresenter = this._mostCommentedMoviePresenter;
+        let presentersWithMovie = this._defineNeededPresenters();
+        let neededPresenter = null;
+        if (presentersWithMovie.length) {
+          for (let presenterWithMovie of presentersWithMovie) {
+            const presenterPopupScrollTop = presenterWithMovie[this._updatedMovieId].getFilmDetailsPopupScrollTop();
+            if (presenterPopupScrollTop > this._popupScrollTop) {
+              this._popupScrollTop = presenterPopupScrollTop;
+              neededPresenter = presenterWithMovie;
+            }
+          }
         }
-        const popupScrollTop = neededPresenter[data.id].getFilmDetailsPopupScrollTop();
         this._clearMovieShowcase();
         this._renderMovieShowcase();
-        neededPresenter[data.id].showFilmDetailsPopup(popupScrollTop);
+        presentersWithMovie = this._defineNeededPresenters();
+        if (presentersWithMovie.includes(neededPresenter)) {
+          neededPresenter[this._updatedMovieId].showFilmDetailsPopup(this._popupScrollTop);
+          this._popupScrollTop = 0;
+        }
+        // else {
+        //   if (Object.keys(data).includes(`comments`)) {
+        //     console.log(`The film is no longer the leader in most commented section`);
+        //   }
+        // }
         break;
       case UpdateType.MAJOR:
         this._clearMovieShowcase({resetRenderedFilmCardsCount: true, resetSortType: true});
         this._renderMovieShowcase();
         break;
     }
+  }
+
+  _defineNeededPresenters(presentersWithMovie = []) {
+    if (this._baseMoviePresenter[this._updatedMovieId]) {
+      presentersWithMovie.push(this._baseMoviePresenter);
+    }
+    if (this._topRaitedMoviePresenter[this._updatedMovieId]) {
+      presentersWithMovie.push(this._topRaitedMoviePresenter);
+    }
+    if (this._mostCommentedMoviePresenter[this._updatedMovieId]) {
+      presentersWithMovie.push(this._mostCommentedMoviePresenter);
+    }
+
+    return presentersWithMovie;
   }
 
   // закрытие всех открытых попапов у карточек фильмов
