@@ -1,7 +1,6 @@
 import FilmCardView from "../view/film-card";
 import FilmDetailsView from "../view/film-details";
 import {render, replace, remove, RenderPosition} from "../utils/render";
-// import {ActionOnComment} from "../consts";
 import {ActionOnMovie, UpdateType} from "../consts";
 
 const Mode = {
@@ -19,7 +18,6 @@ export default class Movie {
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
     this._mode = Mode.DEFAULT;
-    // this._popupScrollTop = 0;
 
     this._handleToDetailsClick = this._handleToDetailsClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -30,8 +28,6 @@ export default class Movie {
     this._handlePopupWatchlistClick = this._handlePopupWatchlistClick.bind(this);
     this._handleCommentListModification = this._handleCommentListModification.bind(this);
     this._handleCloseDetails = this._handleCloseDetails.bind(this);
-    // this._saveFilmDetailsPopupScrollTop = this._saveFilmDetailsPopupScrollTop.bind(this);
-
   }
 
   init(film, popupContainer) {
@@ -84,36 +80,20 @@ export default class Movie {
     }
   }
 
-  // _saveFilmDetailsPopupScrollTop() {
-  //   this._popupScrollTop = this._filmDetailsComponent.element.scrollTop;
-  // }
-
   // возвращает значение прокрутки
   getFilmDetailsPopupScrollTop() {
-    // this._saveFilmDetailsPopupScrollTop();
-    // return this._popupScrollTop;
     return this._filmDetailsComponent.element.scrollTop;
   }
 
-  // показывает попап
-  // showFilmDetailsPopup() {
-  //   this._showPopup();
-  //   this._filmDetailsComponent.element.scrollTop = this._popupScrollTop;
-  // }
   showFilmDetailsPopup(popupScrollTop = this._popupScrollTop) {
     this._showPopup();
-
     this._filmDetailsComponent.element.scrollTop = popupScrollTop;
-    // if (popupScrollTop !== null) {
-    // }
   }
 
   // получаем комментарии из модели комментариев
   // фильтруем им по id конкретного фильма и возвращаем из функции
   _getComments() {
     let comments = this._commentsModel.getComments().slice();
-
-
     comments = comments.filter((comment) => {
       return this._film.comments.includes(comment.id);
     });
@@ -125,7 +105,6 @@ export default class Movie {
   _showPopup() {
     this._popupContainer.appendChild(this._filmDetailsComponent.element);
     this._filmDetailsComponent.setViewingPopupHandler(this._handleCommentListModification);
-
     this._mode = Mode.DETAILED;
   }
 
@@ -140,12 +119,11 @@ export default class Movie {
     this._changeModelData(
         actionType,
         UpdateType.MINOR_AND_POPUP,
-        movie, comment); // *
+        movie, comment);
   }
 
   _handleCloseDetails() {
     if (this._popupContainer.contains(this._filmDetailsComponent.element)) {
-      // this._saveFilmDetailsPopupScrollTop();
       this._popupContainer.removeChild(this._filmDetailsComponent.element);
       this._mode = Mode.DEFAULT;
     }

@@ -4,6 +4,7 @@ import {isEscKeyPressed, isEnterKeyPressed, isCtrlKeyPressed} from "../utils/com
 import AbstractView from "./abstract";
 import {ActionOnComment} from "../consts";
 import {guid} from "../utils/common";
+import he from "he";
 
 const Emoji = {
   SMILE: `smile`,
@@ -116,7 +117,7 @@ const createFilmDetailsTemplate = (data) => {
         <img src="${emojiSource}" width="55" height="55" alt="emoji-${emojiName}">
       </span>
       <div>
-        <p class="film-details__comment-text">${message}</p>
+        <p class="film-details__comment-text">${he.encode(message)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${date}</span>
@@ -228,8 +229,8 @@ export default class FilmDetails extends AbstractView {
   constructor(film, comments) {
     super();
     this._film = film;
-    this._comments = comments.slice(); // комментарии данного фильма (не вся модель)
-    this._data = FilmDetails.parseFilmToData(this._film, this._comments); // комментарии данного фильма (не вся модель)
+    this._comments = comments; // комментарии данного фильма (не вся модель)
+    this._data = FilmDetails.parseFilmToData(this._film, this._comments);
 
     this._closeDetailsHandler = this._closeDetailsHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -303,12 +304,15 @@ export default class FilmDetails extends AbstractView {
   _newCommentTextChangeHandler(event) {
     this._data.newComment.comment = event.target.value;
 
+    this.textArea = this.element.querySelector(`.film-details__comment-input`);
+    this._data.newComment.carretPosition = this.textArea.selectionStart;
+
     this._updateNewCommentElement();
     this._setEditNewCommentHandlers();
 
     this.textArea = this.element.querySelector(`.film-details__comment-input`);
     this.textArea.focus();
-    this.textArea.selectionStart = this.textArea.value.length;
+    this.textArea.selectionStart = this._data.newComment.carretPosition;
   }
 
   _getTemplate() {
@@ -367,7 +371,8 @@ export default class FilmDetails extends AbstractView {
 
   _deleteButtonClickHandler(event) {
     event.preventDefault();
-    event.target.removeEventListener(`click`, this._deleteButtonClickHandler); // есть ли смысл удалять этот обработчик?
+    // есть ли смысл удалять этот обработчик?
+    event.target.removeEventListener(`click`, this._deleteButtonClickHandler);
     const deletedCommentId = event.target.dataset.commentId;
     const deletedComment = this._data.comments.find((comment) => {
       return comment.id === deletedCommentId;

@@ -232,6 +232,7 @@ export default class MovieList {
         this._mostCommentedMoviePresenter);
   }
 
+  // очистка всех списков витрины вместе со всем их контейнерами
   _clearMovieShowcase({resetRenderedFilmCardsCount = false, resetSortType = false} = {}) {
     const moviesCount = this._getMovies().length;
 
@@ -301,7 +302,7 @@ export default class MovieList {
           throw new Error(`'updatedComment' parameter did not set`);
         }
         this._moviesModel.updateMovie(updateType, updatedMovie); // в результате инициирует вызов _handleModelEvent с теми же параметрами
-        this._commentsModel.addComment(updateType, updatedComment); // в результате инициирует вызов _handleModelEvent с теми же параметрами
+        this._commentsModel.addComment(updateType, updatedComment);
         break;
       case ActionOnComment.DELETE:
         if (updatedComment === null) {
@@ -342,7 +343,7 @@ export default class MovieList {
         }
         // else {
         //   if (Object.keys(data).includes(`comments`)) {
-        //     console.log(`The film is no longer the leader in most commented section`);
+        //     console.log(`The film is no longer the leader in the most commented section`);
         //   }
         // }
         break;
