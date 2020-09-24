@@ -1,5 +1,5 @@
 export const FilmCount = {
-  FOR_FILMLIST: 12,
+  FOR_FILMLIST: 15,
   FOR_EXTRAFILMLIST: 2,
   PER_STEP: 5,
 };
@@ -19,4 +19,30 @@ export const SortType = {
   DATE: `date`,
   RAITING: `raiting`
 };
-
+export const RefreshingTarget = {
+  ALL: `all`,
+  BASE: `base`,
+  EXTRA: `extra`,
+  TOP_RAITED: `top-raited`,
+  MOST_COMMENTED: `most-commented`,
+};
+export const ActionOnMovie = {
+  // ADD: `ADD_MOVIE`,
+  UPDATE: `UPDATE_MOVIE`,
+  // DELETE: `DELETE_MOVIE`
+};
+export const ActionOnComment = {
+  ADD: `ADD_COMMENT`,
+  DELETE: `DELETE_COMMENT`
+};
+export const UpdateType = {
+  MINOR: `MINOR`,
+  MINOR_AND_POPUP: `MINOR_AND_POPUP`,
+  MAJOR: `MAJOR`
+};
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`,
+};

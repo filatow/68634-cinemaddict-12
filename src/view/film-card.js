@@ -20,13 +20,14 @@ const createFilmCardTemplate = (film) => {
     ? `film-card__controls-item--active`
     : ``;
   const filmRuntime = formatFilmDuration(duration);
+  const releaseYear = releaseDate.getFullYear();
 
   return (
     `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
     <p class="film-card__rating">${raiting}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${releaseDate.getFullYear()}</span>
+      <span class="film-card__year">${releaseYear}</span>
       <span class="film-card__duration">${filmRuntime}</span>
       <span class="film-card__genre">${genres[0]}</span>
     </p>

@@ -2,6 +2,9 @@ import {formatFilmReleaseDate, formatCommentPostDate, formatFilmDuration} from "
 import {createElement, replace} from "../utils/render";
 import {isEscKeyPressed, isEnterKeyPressed, isCtrlKeyPressed} from "../utils/common";
 import AbstractView from "./abstract";
+import {ActionOnComment} from "../consts";
+import {guid} from "../utils/common";
+import he from "he";
 
 const Emoji = {
   SMILE: `smile`,
@@ -11,7 +14,7 @@ const Emoji = {
 };
 
 const createNewCommentTemplate = (newComment) => {
-  let {text, checkedEmoji} = newComment;
+  let {comment, emotion} = newComment;
 
   let selectedEmojiImage = ``;
   let emojiSmileIsChecked = false;
@@ -19,10 +22,10 @@ const createNewCommentTemplate = (newComment) => {
   let emojiPukeIsChecked = false;
   let emojiAngryIsChecked = false;
 
-  if (checkedEmoji !== null) {
-    selectedEmojiImage = `<img src="images/emoji/${checkedEmoji}.png"
-      width="55" height="55" alt="emoji-${checkedEmoji}">`;
-    switch (checkedEmoji) {
+  if (emotion !== null) {
+    selectedEmojiImage = `<img src="images/emoji/${emotion}.png"
+      width="55" height="55" alt="emoji-${emotion}">`;
+    switch (emotion) {
       case Emoji.SMILE:
         emojiSmileIsChecked = true;
         break;
@@ -43,7 +46,7 @@ const createNewCommentTemplate = (newComment) => {
       <div for="add-emoji" class="film-details__add-emoji-label">${selectedEmojiImage}</div>
 
       <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${text}</textarea>
+        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment}</textarea>
       </label>
 
       <div class="film-details__emoji-list">
@@ -102,23 +105,23 @@ const createFilmDetailsTemplate = (data) => {
   const filmRuntime = formatFilmDuration(duration);
 
   const filmComments = comments.map((comment) => {
-    const emojiSource = comment.emoji;
-    const re = /images\/emoji\/|\\.png/;
-    const emojiName = emojiSource.replace(re, ``);
-    const message = comment.message;
     const author = comment.author;
+    const message = comment.comment;
     const date = formatCommentPostDate(comment.date);
+    const emojiSource = `images/emoji/${comment.emotion}.png`;
+    const emojiName = comment.emotion;
+    const commentId = comment.id;
 
     return `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="${emojiSource}" width="55" height="55" alt="emoji-${emojiName}">
       </span>
       <div>
-        <p class="film-details__comment-text">${message}</p>
+        <p class="film-details__comment-text">${he.encode(message)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${date}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${commentId}">Delete</button>
         </p>
       </div>
     </li>`;
@@ -181,7 +184,7 @@ const createFilmDetailsTemplate = (data) => {
                 <td class="film-details__cell">${country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${genres.length > 1 ? `Genres` : `Genre`}</td>
                 <td class="film-details__cell">
                   ${filmGenres}
                   </td>
@@ -223,10 +226,11 @@ const createFilmDetailsTemplate = (data) => {
 };
 
 export default class FilmDetails extends AbstractView {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._film = film;
-    this._data = FilmDetails.parseFilmToData(film);
+    this._comments = comments; // комментарии данного фильма (не вся модель)
+    this._data = FilmDetails.parseFilmToData(this._film, this._comments);
 
     this._closeDetailsHandler = this._closeDetailsHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -237,7 +241,9 @@ export default class FilmDetails extends AbstractView {
     this._newCommentEmojiChangeHandler = this._newCommentEmojiChangeHandler.bind(this);
     this._newCommentTextChangeHandler = this._newCommentTextChangeHandler.bind(this);
     this._readyToPostSwitchOffHandler = this._readyToPostSwitchOffHandler.bind(this);
-    this.setEditNewCommentHandlers();
+    this._deleteButtonClickHandler = this._deleteButtonClickHandler.bind(this);
+    this._setEditNewCommentHandlers();
+    this._setDeleteCommentHandler(this._deleteButtonClickHandler);
   }
 
   setFavoriteClickHandler(callback) {
@@ -256,7 +262,7 @@ export default class FilmDetails extends AbstractView {
   }
 
   setViewingPopupHandler(callback) {
-    this._callback.viewingPopup = callback;
+    this._callback.commentListModification = callback;
     document.addEventListener(`keydown`, this._viewingPopupHandler);
   }
 
@@ -265,7 +271,7 @@ export default class FilmDetails extends AbstractView {
     this.element.querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeDetailsHandler);
   }
 
-  setEditNewCommentHandlers() {
+  _setEditNewCommentHandlers() {
     this.element
       .querySelector(`.film-details__emoji-list`)
       .addEventListener(`click`, this._newCommentEmojiChangeHandler);
@@ -274,38 +280,39 @@ export default class FilmDetails extends AbstractView {
       .addEventListener(`input`, this._newCommentTextChangeHandler);
   }
 
-  _updateNewCommentElement() {
+  _updateNewCommentElement(updatedNewComment = this._data.newComment) {
     let prevElement = this.element.querySelector(`.film-details__new-comment`);
-    const newCommentTemplate = createNewCommentTemplate(this._data.newComment);
+    const newCommentTemplate = createNewCommentTemplate(updatedNewComment);
     const newElement = createElement(newCommentTemplate);
     replace(newElement, prevElement);
     prevElement = null;
   }
 
   _newCommentEmojiChangeHandler(event) {
-    switch (event.target.tagName) {
-      case `IMG`:
-        this._data.newComment.checkedEmoji = event.target.parentElement.previousElementSibling.value;
-        break;
-      case `LABEL`:
-        this._data.newComment.checkedEmoji = event.target.previousElementSibling.value;
-        break;
-      default:
-        return;
+    if (event.target.classList.contains(`film-details__emoji-label`)) {
+      this._data.newComment.emotion = event.target.previousElementSibling.value;
+    } else if (event.target.parentElement.classList.contains(`film-details__emoji-label`)) {
+      this._data.newComment.emotion = event.target.parentElement.previousElementSibling.value;
+    } else {
+      return;
     }
+
     this._updateNewCommentElement();
-    this.setEditNewCommentHandlers();
+    this._setEditNewCommentHandlers();
   }
 
   _newCommentTextChangeHandler(event) {
-    this._data.newComment.text = event.target.value;
+    this._data.newComment.comment = event.target.value;
+
+    this.textArea = this.element.querySelector(`.film-details__comment-input`);
+    this._data.newComment.carretPosition = this.textArea.selectionStart;
 
     this._updateNewCommentElement();
-    this.setEditNewCommentHandlers();
+    this._setEditNewCommentHandlers();
 
     this.textArea = this.element.querySelector(`.film-details__comment-input`);
     this.textArea.focus();
-    this.textArea.selectionStart = this.textArea.value.length;
+    this.textArea.selectionStart = this._data.newComment.carretPosition;
   }
 
   _getTemplate() {
@@ -335,7 +342,6 @@ export default class FilmDetails extends AbstractView {
   }
 
   _viewingPopupHandler(event) {
-
     if (isEscKeyPressed(event)) {
       this._closeDetailsHandler(event);
     }
@@ -346,59 +352,126 @@ export default class FilmDetails extends AbstractView {
     }
 
     if (isEnterKeyPressed(event) && this._data.newComment.isReadyToPost) {
-      if (this._data.newComment.text && this._data.newComment.checkedEmoji) {
+      if (this._data.newComment.comment && this._data.newComment.emotion) {
         event.preventDefault();
-        this._callback.viewingPopup(FilmDetails.parseDataToFilm(this._data));
+        this._data.newComment.id = guid();
+        this._data.newComment.date = new Date();
+        this._callback.commentListModification(
+            ActionOnComment.ADD,
+            FilmDetails.parseDataToFilm(this._data),
+            FilmDetails.parseDataToNewComment(this._data));
+
         document.removeEventListener(`keydown`, this._viewingPopupHandler);
+
         return;
       }
       this._closeDetailsHandler(event);
     }
+  }
 
+  _deleteButtonClickHandler(event) {
+    event.preventDefault();
+    // есть ли смысл удалять этот обработчик?
+    event.target.removeEventListener(`click`, this._deleteButtonClickHandler);
+    const deletedCommentId = event.target.dataset.commentId;
+    const deletedComment = this._data.comments.find((comment) => {
+      return comment.id === deletedCommentId;
+    });
+    this._data.comments = this._data.comments.filter((comment) => {
+      return comment.id !== deletedCommentId;
+    });
+    this._callback.commentListModification(
+        ActionOnComment.DELETE,
+        FilmDetails.parseDataToFilm(this._data),
+        deletedComment);
+  }
+
+  _setDeleteCommentHandler(callback) {
+    this.element
+      .querySelectorAll(`.film-details__comment-delete`)
+      .forEach((elem) => {
+        elem.addEventListener(`click`, callback);
+      });
+  }
+
+  _emptifyNewCommentElement() {
+    this._data.newComment = {
+      comment: ``,
+      emotion: null,
+      isReadyToPost: false,
+    };
+    this._updateNewCommentElement();
+    this._setEditNewCommentHandlers();
   }
 
   _closeDetailsHandler(event) {
     event.preventDefault();
+    this._emptifyNewCommentElement();
     this._callback.closeDetails();
+
     document.removeEventListener(`keydown`, this._viewingPopupHandler);
   }
 
-  static parseFilmToData(film) {
-    return Object.assign(
+  static parseFilmToData(film, filmComments) {
+    const data = Object.assign(
         {},
         film,
         {
+          comments: filmComments
+        },
+        {
           newComment: {
-            text: ``,
-            checkedEmoji: null,
+            comment: ``,
+            emotion: null,
             isReadyToPost: false,
           }
         }
     );
+
+    return data;
   }
 
   static parseDataToFilm(dataForParsing) {
     let data = Object.assign({}, dataForParsing);
 
-    const message = data.newComment.text;
-    let emoji = data.newComment.checkedEmoji;
+    const comment = data.newComment.comment;
+    let emotion = data.newComment.emotion;
 
-    if (message && emoji) {
-      const date = new Date();
-      emoji = `images/emoji/${data.newComment.checkedEmoji}.png`;
-
-      data.comments.push(
-          {
-            emoji,
-            date,
-            author: `userName`,
-            message,
-          }
-      );
+    let initialComments = [];
+    if (comment && emotion) {
+      initialComments = [data.newComment.id];
     }
+
+    data = Object.assign(
+        {},
+        data,
+        {
+          comments: data.comments.reduce((accumulator, currentComment) => {
+            accumulator.push(currentComment.id);
+            return accumulator;
+          }, initialComments)
+        }
+    );
 
     delete data.newComment;
     return data;
   }
 
+  static parseDataToNewComment(dataForParsing) {
+    let data = Object.assign({}, dataForParsing);
+
+    const id = data.newComment.id;
+    const author = `userName`;
+    const comment = data.newComment.comment;
+    const date = data.newComment.date;
+    const emotion = data.newComment.emotion;
+
+    return {
+      id,
+      author,
+      comment,
+      date,
+      emotion
+    };
+  }
 }
