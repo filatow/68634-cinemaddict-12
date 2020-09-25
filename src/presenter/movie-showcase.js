@@ -19,6 +19,8 @@ export default class MovieList {
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
     this._commentsModel = commentsModel;
+    this._renderedFilmCardsCount = FilmCount.PER_STEP;
+
     this._currentSortType = SortType.DEFAULT;
     this._updatedMovieId = null;
 
@@ -48,17 +50,29 @@ export default class MovieList {
     this._clearFilmListFilmCards = this._clearFilmListFilmCards.bind(this);
     this._renderExtraFilmListFilmCards = this._renderExtraFilmListFilmCards.bind(this);
 
-    this._moviesModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-    this._commentsModel.addObserver(this._handleModelEvent);
+    // this._moviesModel.addObserver(this._handleModelEvent);
+    // this._filterModel.addObserver(this._handleModelEvent);
+    // this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init(popupContainer) {
     this._popupContainer = popupContainer;
     this._popupScrollTop = 0;
-    this._renderedFilmCardsCount = FilmCount.PER_STEP;
+    // this._renderedFilmCardsCount = FilmCount.PER_STEP;
+
+    this._moviesModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
 
     this._renderMovieShowcase();
+  }
+
+  destroy() {
+    this._moviesModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+    this._commentsModel.removeObserver(this._handleModelEvent);
+
+    this._clearMovieShowcase({resetRenderedFilmCardsCount: true, resetSortType: true});
   }
 
   _getMovies() {

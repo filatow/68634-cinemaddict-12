@@ -285,6 +285,12 @@ export default class FilmDetails extends AbstractView {
     const newCommentTemplate = createNewCommentTemplate(updatedNewComment);
     const newElement = createElement(newCommentTemplate);
     replace(newElement, prevElement);
+    this.element
+      .querySelector(`.film-details__emoji-list`)
+      .removeEventListener(`click`, this._newCommentEmojiChangeHandler);
+    this.element
+      .querySelector(`.film-details__comment-input`)
+      .removeEventListener(`input`, this._newCommentTextChangeHandler);
     prevElement = null;
   }
 
