@@ -55,9 +55,12 @@ export default class MovieList {
     // this._commentsModel.addObserver(this._handleModelEvent);
   }
 
-  init(popupContainer) {
+  init(popupContainer, handleUserRankUpdate) {
     this._popupContainer = popupContainer;
     this._popupScrollTop = 0;
+    if (handleUserRankUpdate) {
+      this._handleUserRankUpdate = handleUserRankUpdate;
+    }
     // this._renderedFilmCardsCount = FilmCount.PER_STEP;
 
     this._moviesModel.addObserver(this._handleModelEvent);
@@ -120,7 +123,7 @@ export default class MovieList {
   _renderFilmCard(filmListContainer, film, extraMoviePresenter = null) {
     const moviePresenter = new MoviePresenter(
         filmListContainer,
-        this._handleViewAction, this._handleViewModeChange,
+        this._handleViewAction, this._handleViewModeChange, this._handleUserRankUpdate,
         this._commentsModel);
 
     moviePresenter.init(film, this._popupContainer);

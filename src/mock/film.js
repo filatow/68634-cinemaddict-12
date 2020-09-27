@@ -164,7 +164,7 @@ const generateComments = () => {
 
 const generateReleaseDate = () => {
   let fromDate = new Date();
-  fromDate.setFullYear(1980, 0, 1);
+  fromDate.setFullYear(2019, 4, 0);
   fromDate.setHours(0, 0, 0, 0);
 
   let currentDate = new Date();

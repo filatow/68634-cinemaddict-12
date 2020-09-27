@@ -1,4 +1,3 @@
-// import FilterMenuView from "./view/filter-menu";
 import UserRankView from "./view/user-rank";
 import FilmsAmountView from "./view/films-amount";
 import StatisticsView from "./view/statistics";
@@ -41,23 +40,24 @@ const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
 const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 
-render(siteHeaderElement, new UserRankView(), RenderPosition.BEFOREEND);
+let userRankComponent = new UserRankView(moviesModel.getMovies());
+render(siteHeaderElement, userRankComponent, RenderPosition.BEFOREEND);
 render(footerStatisticsElement, new FilmsAmountView(generateFilmsAmount()), RenderPosition.BEFOREEND);
 
 const movieShowcasePresenter = new MovieShowcasePresenter(siteMainElement, moviesModel, filterModel, commentsModel);
 const filterMenuPresenter = new FilterMenuPresenter(siteMainElement, filterModel, moviesModel);
 
-let statisticsComponent;
+let statisticsComponent = null;
 
 const handleFilterMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.STATISTICS:
       movieShowcasePresenter.destroy();
-      statisticsComponent = new StatisticsView();
+      statisticsComponent = new StatisticsView(moviesModel.getMovies());
       render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
     default:
-      if (statisticsComponent) {
+      if (statisticsComponent !== null) {
         remove(statisticsComponent);
       }
       movieShowcasePresenter.destroy();
@@ -66,8 +66,15 @@ const handleFilterMenuClick = (menuItem) => {
   }
 };
 
-filterMenuPresenter.init(handleFilterMenuClick);
-movieShowcasePresenter.init(siteFooterElement);
+const handleUserRankUpdate = () => {
+  if (userRankComponent) {
+    remove(userRankComponent);
+  }
 
-// statisticsComponent = new StatisticsView();
-// render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
+  userRankComponent = new UserRankView(moviesModel.getMovies());
+  render(siteHeaderElement, userRankComponent, RenderPosition.BEFOREEND);
+};
+
+
+filterMenuPresenter.init(handleFilterMenuClick);
+movieShowcasePresenter.init(siteFooterElement, handleUserRankUpdate);

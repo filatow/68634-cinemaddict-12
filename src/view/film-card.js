@@ -1,5 +1,5 @@
 import AbstractView from "./abstract";
-import {formatFilmDuration} from "../utils/films";
+import {formatTiming} from "../utils/films";
 
 const createFilmCardTemplate = (film) => {
   const {
@@ -19,7 +19,7 @@ const createFilmCardTemplate = (film) => {
   const favoriteClassName = isFavorite
     ? `film-card__controls-item--active`
     : ``;
-  const filmRuntime = formatFilmDuration(duration);
+  const filmRuntime = formatTiming(duration);
   const releaseYear = releaseDate.getFullYear();
 
   return (
