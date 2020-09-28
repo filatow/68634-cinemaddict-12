@@ -11,6 +11,7 @@ export default class FilterMenu {
     this._currentFilterType = null;
 
     this._filterMenuComponent = null;
+    this._handleFilterMenuClick = null;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
@@ -19,7 +20,10 @@ export default class FilterMenu {
     this._filterModel.addObserver(this._handleModelEvent);
   }
 
-  init() {
+  init(handleFilterMenuClick) {
+    if (handleFilterMenuClick) {
+      this._handleFilterMenuClick = handleFilterMenuClick;
+    }
     this._currentFilterType = this._filterModel.getFilter();
 
     const filters = this._getFilters();
@@ -27,6 +31,9 @@ export default class FilterMenu {
 
     this._filterMenuComponent = new FilterMenuView(filters, this._currentFilterType);
     this._filterMenuComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    if (this._handleFilterMenuClick !== null) {
+      this._filterMenuComponent.setFilterMenuClickHandler(this._handleFilterMenuClick);
+    }
 
     if (prevFilterMenuComponent === null) {
       render(this._filterMenuContainer, this._filterMenuComponent, RenderPosition.BEFOREEND);

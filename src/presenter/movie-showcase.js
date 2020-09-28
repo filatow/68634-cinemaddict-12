@@ -19,6 +19,8 @@ export default class MovieList {
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
     this._commentsModel = commentsModel;
+    this._renderedFilmCardsCount = FilmCount.PER_STEP;
+
     this._currentSortType = SortType.DEFAULT;
     this._updatedMovieId = null;
 
@@ -48,17 +50,32 @@ export default class MovieList {
     this._clearFilmListFilmCards = this._clearFilmListFilmCards.bind(this);
     this._renderExtraFilmListFilmCards = this._renderExtraFilmListFilmCards.bind(this);
 
+    // this._moviesModel.addObserver(this._handleModelEvent);
+    // this._filterModel.addObserver(this._handleModelEvent);
+    // this._commentsModel.addObserver(this._handleModelEvent);
+  }
+
+  init(popupContainer, handleUserRankUpdate) {
+    this._popupContainer = popupContainer;
+    this._popupScrollTop = 0;
+    if (handleUserRankUpdate) {
+      this._handleUserRankUpdate = handleUserRankUpdate;
+    }
+    // this._renderedFilmCardsCount = FilmCount.PER_STEP;
+
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
     this._commentsModel.addObserver(this._handleModelEvent);
-  }
-
-  init(popupContainer) {
-    this._popupContainer = popupContainer;
-    this._popupScrollTop = 0;
-    this._renderedFilmCardsCount = FilmCount.PER_STEP;
 
     this._renderMovieShowcase();
+  }
+
+  destroy() {
+    this._moviesModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+    this._commentsModel.removeObserver(this._handleModelEvent);
+
+    this._clearMovieShowcase({resetRenderedFilmCardsCount: true, resetSortType: true});
   }
 
   _getMovies() {
@@ -106,7 +123,7 @@ export default class MovieList {
   _renderFilmCard(filmListContainer, film, extraMoviePresenter = null) {
     const moviePresenter = new MoviePresenter(
         filmListContainer,
-        this._handleViewAction, this._handleViewModeChange,
+        this._handleViewAction, this._handleViewModeChange, this._handleUserRankUpdate,
         this._commentsModel);
 
     moviePresenter.init(film, this._popupContainer);

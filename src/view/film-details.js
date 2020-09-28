@@ -1,4 +1,4 @@
-import {formatFilmReleaseDate, formatCommentPostDate, formatFilmDuration} from "../utils/films";
+import {formatFilmReleaseDate, formatCommentPostDate, formatTiming} from "../utils/films";
 import {createElement, replace} from "../utils/render";
 import {isEscKeyPressed, isEnterKeyPressed, isCtrlKeyPressed} from "../utils/common";
 import AbstractView from "./abstract";
@@ -102,7 +102,7 @@ const createFilmDetailsTemplate = (data) => {
     : ``;
   const filmWriters = writers.join(`, `);
   const filmActors = actors.join(`, `);
-  const filmRuntime = formatFilmDuration(duration);
+  const filmRuntime = formatTiming(duration);
 
   const filmComments = comments.map((comment) => {
     const author = comment.author;
@@ -285,6 +285,12 @@ export default class FilmDetails extends AbstractView {
     const newCommentTemplate = createNewCommentTemplate(updatedNewComment);
     const newElement = createElement(newCommentTemplate);
     replace(newElement, prevElement);
+    this.element
+      .querySelector(`.film-details__emoji-list`)
+      .removeEventListener(`click`, this._newCommentEmojiChangeHandler);
+    this.element
+      .querySelector(`.film-details__comment-input`)
+      .removeEventListener(`input`, this._newCommentTextChangeHandler);
     prevElement = null;
   }
 

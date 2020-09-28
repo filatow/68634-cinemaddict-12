@@ -15,7 +15,7 @@ export const formatCommentPostDate = (dueDate) => {
   return moment(dueDate).format(`YYYY/MM/DD HH:mm`);
 };
 
-export const formatFilmDuration = (durationInMinutes) => {
+export const formatTiming = (durationInMinutes) => {
   const wholeHours = Math.floor(durationInMinutes / 60);
   return (
     wholeHours

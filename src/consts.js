@@ -1,5 +1,10 @@
+export const UserRank = {
+  NOVICE: `Novice`,
+  FAN: `Fan`,
+  MOVIE_BUFF: `Movie Buff`,
+};
 export const FilmCount = {
-  FOR_FILMLIST: 15,
+  FOR_FILMLIST: 30,
   FOR_EXTRAFILMLIST: 2,
   PER_STEP: 5,
 };
@@ -14,6 +19,13 @@ export const FILM_GENRES = [
   `Comedy`,
   `Cartoon`,
 ];
+export const ReleasingPeriod = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`,
+};
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
@@ -33,12 +45,12 @@ export const ActionOnMovie = {
 };
 export const ActionOnComment = {
   ADD: `ADD_COMMENT`,
-  DELETE: `DELETE_COMMENT`
+  DELETE: `DELETE_COMMENT`,
 };
 export const UpdateType = {
   MINOR: `MINOR`,
   MINOR_AND_POPUP: `MINOR_AND_POPUP`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
 };
 export const FilterType = {
   ALL: `all`,
@@ -46,3 +58,8 @@ export const FilterType = {
   HISTORY: `history`,
   FAVORITES: `favorites`,
 };
+export const MenuItem = {
+  FILTER_ITEM: `filter-item`,
+  STATISTICS: `statistics`,
+};
+export const FIRST_FILM_EVER_RELEASE_DATE = new Date(1895, 11, 28);

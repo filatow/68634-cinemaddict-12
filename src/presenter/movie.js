@@ -9,10 +9,11 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(filmListContainer, handleViewAction, changeViewMode, commentsModel) {
+  constructor(filmListContainer, handleViewAction, changeViewMode, updateUserRank, commentsModel) {
     this._filmListContainer = filmListContainer;
     this._changeModelData = handleViewAction;
     this._changeViewMode = changeViewMode;
+    this._updateUserRank = updateUserRank;
     this._commentsModel = commentsModel;
 
     this._filmCardComponent = null;
@@ -156,6 +157,7 @@ export default class Movie {
             }
         )
     );
+    this._updateUserRank();
   }
 
   // обработчик клика по кнопке watchlist
