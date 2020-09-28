@@ -60,15 +60,14 @@ export default class FilterMenu extends AbstractView {
 
   setFilterMenuClickHandler(callback) {
     this._callback.filterMenuClick = callback;
-    this.element.querySelectorAll(`.main-navigation__item, .main-navigation__additional`)
-      .forEach((elem) => {
-        elem.addEventListener(`click`, this._filterMenuClickHandler);
-      });
+    this.element.addEventListener(`click`, this._filterMenuClickHandler);
   }
 
   _filterMenuClickHandler(event) {
     event.preventDefault();
-    this._callback.filterMenuClick(event.target.dataset.menuItem);
+    if (event.target.dataset.menuItem) {
+      this._callback.filterMenuClick(event.target.dataset.menuItem);
+    }
 
     if (event.target.dataset.menuItem === MenuItem.STATISTICS) {
       this.element.querySelectorAll(`.main-navigation__item`)
