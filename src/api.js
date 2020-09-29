@@ -17,19 +17,33 @@ export default class Api {
   }
 
   getMovies() {
-    return this._load({url: `/movies`})
+    return this._load({url: `movies`})
       .then(Api.toJSON)
-      .then((movies) => movies.map(MoviesModel.adaptToClient));
+      .then((movies) => {
+        // console.log(`movies from SERVER: `, movies);
+        return movies.map(MoviesModel.adaptToClient);
+      });
   }
 
   updateMovie(movie) {
     return this._load({
-      url: `/movies/${movie.id}`,
+      url: `movies/${movie.id}`,
       method: Method.PUT,
       body: JSON.stringify(MoviesModel.adaptToServer(movie)),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON);
+  }
+
+  getComments(movies) {
+    return Promise.all(
+        movies.map((movie) => {
+          return this._load({url: `comments/${movie.id}`})
+          .then((response) => {
+            return Api.toJSON(response);
+          });
+        })
+    ).then((values) => values.flat());
   }
 
   // универсальный метод серверного запроса

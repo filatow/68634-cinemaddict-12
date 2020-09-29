@@ -17,15 +17,6 @@ export default class Movies extends Observer {
     return this._movies;
   }
 
-  // addMovie(updateType, update) {
-  //   this._movies = [
-  //     update,
-  //     ...this._movies
-  //   ];
-
-  //   this._notify(updateType, update);
-  // }
-
   updateMovie(updateType, update) {
     const index = this._movies.findIndex((movie) => movie.id === update.id);
 
@@ -42,21 +33,6 @@ export default class Movies extends Observer {
     this._notify(updateType, update);
   }
 
-  // deleteMovie(updateType, update) {
-  //   const index = this._movies.findIndex((movie) => movie.id === update.id);
-
-  //   if (index === -1) {
-  //     throw new Error(`Can't delete unexisting movie`);
-  //   }
-
-  //   this._movies = [
-  //     ...this._movies.slice(0, index),
-  //     ...this._movies.slice(index + 1)
-  //   ];
-
-  //   this._notify(updateType, update);
-  // }
-
   static adaptToClient(movie) {
     const adaptedMovie = Object.assign(
         {},
@@ -72,7 +48,7 @@ export default class Movies extends Observer {
           genres: movie.film_info.genre,
           isFavorite: movie.user_details.favorite,
           isWatched: movie.user_details.already_watched,
-          isWatchlisted: movie.user_details.favorite,
+          isWatchlisted: movie.user_details.watchlist,
           watchingDate: movie.user_details.watching_date !== null // добавить учет в статистике
             ? new Date(movie.user_details.watching_date)
             : movie.user_details.watching_date,
@@ -95,19 +71,19 @@ export default class Movies extends Observer {
     const adaptedMovie = Object.assign(
         {},
         {
-          id: movie.id,
           comments: movie.comments,
+          id: movie.id,
           film_info: {
             title: movie.title,
             alternative_title: movie.titleOriginal,
             total_rating: Number(movie.raiting),
             poster: movie.poster,
-            age_rating: Number.parseInt(movie.raiting, 10),
+            age_rating: Number.parseInt(movie.ageLimitation, 10),
             director: movie.director,
             writers: movie.writers,
             actors: movie.actors,
             release: {
-              date: movie.releaseDate,
+              date: movie.releaseDate.toJSON(),
               release_country: movie.country
             },
             runtime: movie.duration,
@@ -117,10 +93,20 @@ export default class Movies extends Observer {
           user_details: {
             watchlist: movie.isWatchlisted,
             already_watched: movie.isWatched,
-            favorite: movie.isFavorite
+            watching_date: (() => {
+              if (movie.isWatched) {
+                return (movie.watchingDate !== null
+                  ? movie.watchingDate
+                  : new Date()).toJSON();
+              }
+              return null;
+            })(),
+            favorite: movie.isFavorite,
           }
         }
     );
+    // console.log(`adaptedMovie to PUT: `, adaptedMovie);
+
 
     return adaptedMovie;
   }

@@ -79,6 +79,7 @@ const createNewCommentTemplate = (newComment) => {
 
 
 const createFilmDetailsTemplate = (data) => {
+  // console.log(`DATA :: `, data);
   const {
     title, titleOriginal, poster, releaseDate,
     raiting, duration, fullDescription,

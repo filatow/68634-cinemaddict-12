@@ -2,7 +2,6 @@ import UserRankView from "./view/user-rank";
 import FilmsAmountView from "./view/films-amount";
 import StatisticsView from "./view/statistics";
 import {generateFilm} from "./mock/film"; // под удаление
-import {generateFilmsAmount} from "./mock/films-amount";
 import {FilmCount, MenuItem, UpdateType} from "./consts";
 import {render, remove, RenderPosition} from "./utils/render";
 import MovieShowcasePresenter from "./presenter/movie-showcase";
@@ -12,7 +11,7 @@ import CommentsModel from "./model/comments";
 import FilterModel from "./model/filter";
 import Api from "./api";
 
-const AUTHORIZATION = `Basic $om(_rnd0m$tr1n`;
+const AUTHORIZATION = `Basic T_________0001`;
 const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 
 const filmsWithComments = new Array(FilmCount.FOR_FILMLIST).fill().map(generateFilm); // под удаление
@@ -32,7 +31,6 @@ films.forEach((film) => { // временный код, пока нет реал
 
   return film;
 });
-console.log(`films for model = `, films);
 // под удаление /\
 
 const siteHeaderElement = document.querySelector(`.header`);
@@ -43,14 +41,15 @@ const footerStatisticsElement = document.querySelector(`.footer__statistics`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
-const moviesModel = new MoviesModel();
 // moviesModel.setMovies(films);
 
+const moviesModel = new MoviesModel();
 const commentsModel = new CommentsModel();
 commentsModel.setComments(commentsForModel);
 const filterModel = new FilterModel();
 
-const movieShowcasePresenter = new MovieShowcasePresenter(siteMainElement, moviesModel, filterModel, commentsModel);
+const movieShowcasePresenter = new MovieShowcasePresenter(
+    siteMainElement, moviesModel, filterModel, commentsModel, api);
 const filterMenuPresenter = new FilterMenuPresenter(siteMainElement, filterModel, moviesModel);
 
 let statisticsComponent = null;
@@ -87,11 +86,17 @@ movieShowcasePresenter.init(siteFooterElement, handleUserRankUpdate);
 api.getMovies()
   .then((movies) => {
     moviesModel.setMovies(UpdateType.INIT, movies);
+    return api.getComments(moviesModel.getMovies());
+  }, () => {
+    moviesModel.setMovies(UpdateType.INIT, []);
     filterMenuPresenter.init(handleFilterMenuClick);
     render(footerStatisticsElement, new FilmsAmountView(moviesModel.getMovies()), RenderPosition.BEFOREEND);
   })
-  .catch(() => {
-    moviesModel.setTasks(UpdateType.INIT, []);
-    filterMenuPresenter.init(handleFilterMenuClick);
-    render(footerStatisticsElement, new FilmsAmountView(moviesModel.getMovies()), RenderPosition.BEFOREEND);
+  .then((comments) => {
+    console.log(`comments ::> `, comments);
+
+
+    // commentsModel.setComments(comments);
+    // filterMenuPresenter.init(handleFilterMenuClick);
+    // render(footerStatisticsElement, new FilmsAmountView(moviesModel.getMovies()), RenderPosition.BEFOREEND);
   });

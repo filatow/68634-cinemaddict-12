@@ -1,8 +1,6 @@
 import {UserRank} from "../consts";
 import moment from "moment";
 
-// export const getCurrentDate = () => new Date(new Date().setHours(23, 59, 59, 999));
-
 export const getWatchedMovies = (movies) => movies.filter((movie) => movie.isWatched);
 
 export const getMoviesTiming = (movies) => movies.reduce((timing, movie) => (timing += movie.duration), 0);

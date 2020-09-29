@@ -13,13 +13,15 @@ import {getFilmsSortedByRating, getFilmsSortedByCommentsAmount} from "../utils/f
 import {sortByDate, sortByRaiting} from "../utils/films";
 import {filter} from "../utils/filter";
 import {FilmCount, SortType, ActionOnMovie, ActionOnComment, UpdateType} from "../consts";
+import Movies from "../model/movies";
 
 export default class MovieList {
-  constructor(movieShowcaseContainer, moviesModel, filterModel, commentsModel) {
+  constructor(movieShowcaseContainer, moviesModel, filterModel, commentsModel, api) {
     this._movieShowcaseContainer = movieShowcaseContainer;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
     this._commentsModel = commentsModel;
+    this._api = api;
     this._renderedFilmCardsCount = FilmCount.PER_STEP;
 
     this._currentSortType = SortType.DEFAULT;
@@ -53,10 +55,6 @@ export default class MovieList {
 
     this._clearFilmListFilmCards = this._clearFilmListFilmCards.bind(this);
     this._renderExtraFilmListFilmCards = this._renderExtraFilmListFilmCards.bind(this);
-
-    // this._moviesModel.addObserver(this._handleModelEvent);
-    // this._filterModel.addObserver(this._handleModelEvent);
-    // this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init(popupContainer, handleUserRankUpdate) {
@@ -65,7 +63,6 @@ export default class MovieList {
     if (handleUserRankUpdate) {
       this._handleUserRankUpdate = handleUserRankUpdate;
     }
-    // this._renderedFilmCardsCount = FilmCount.PER_STEP;
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -104,7 +101,6 @@ export default class MovieList {
 
     this._sortingComponent = new SortingView(this._currentSortType);
     this._sortingComponent.setSortChangeHandler(this._handleSortTypeChange);
-    // render(this._movieShowcaseContainer, this._sortingComponent, RenderPosition.AFTERBEGIN);
     render(this._movieShowcaseContainer, this._sortingComponent, RenderPosition.BEFOREEND);
   }
 
@@ -325,7 +321,15 @@ export default class MovieList {
     this._updatedMovieId = updatedMovie.id;
     switch (actionType) {
       case ActionOnMovie.UPDATE:
-        this._moviesModel.updateMovie(updateType, updatedMovie);
+        // console.log(`updatedMovie =`, updatedMovie);
+        this._api.updateMovie(updatedMovie)
+        .then((response) => {
+          this._moviesModel.updateMovie(updateType, Movies.adaptToClient(response));
+        })
+        .catch((err) => {
+          console.log(`Some trouble detected...`);
+          console.log(err);
+        });
         this._updatedMovieId = null;
         break;
       case ActionOnComment.ADD:
