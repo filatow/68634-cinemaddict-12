@@ -7,11 +7,12 @@ const createFilmsAmountTemplate = (filmsAmount) => {
 };
 
 export default class FilmsAmount extends AbstractView {
-  constructor(filmsAmount) {
+  constructor(movies) {
     super();
-    this._filmsAmount = filmsAmount;
+
+    this._moviesAmount = movies.length;
   }
   _getTemplate() {
-    return createFilmsAmountTemplate(this._filmsAmount);
+    return createFilmsAmountTemplate(this._moviesAmount);
   }
 }

@@ -1,5 +1,6 @@
 import SortingView from "../view/sorting";
 import FilmsSectionView from "../view/films-section";
+import LoadingView from "../view/loading";
 import NoFilmView from "../view/no-film";
 import FilmsListView from "../view/films-list";
 import FilmsListContainerView from "../view/film-list-container";
@@ -27,7 +28,10 @@ export default class MovieList {
     this._baseMoviePresenter = {};
     this._topRaitedMoviePresenter = {};
     this._mostCommentedMoviePresenter = {};
+    this._isLoading = true;
 
+    this._showcaseSectionComponent = new FilmsSectionView();
+    this._loadingComponent = new LoadingView();
     this._sortingComponent = null;
     this._showMoreButtonComponent = null;
 
@@ -100,6 +104,7 @@ export default class MovieList {
 
     this._sortingComponent = new SortingView(this._currentSortType);
     this._sortingComponent.setSortChangeHandler(this._handleSortTypeChange);
+    // render(this._movieShowcaseContainer, this._sortingComponent, RenderPosition.AFTERBEGIN);
     render(this._movieShowcaseContainer, this._sortingComponent, RenderPosition.BEFOREEND);
   }
 
@@ -112,7 +117,9 @@ export default class MovieList {
     this._showcaseSectionComponent = new FilmsSectionView();
     render(this._movieShowcaseContainer, this._showcaseSectionComponent, RenderPosition.BEFOREEND);
   }
-
+  _renderLoading() {
+    render(this._showcaseSectionComponent, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
   // отрисовка экрана на случай отсутствия фильмов
   _renderNoFilms() {
     this._noFilmComponent = new NoFilmView();
@@ -226,13 +233,19 @@ export default class MovieList {
     const movies = this._getMovies();
     const movieCount = movies.length;
 
+    if (this._isLoading) {
+      this._renderFilmSection();
+      this._renderLoading();
+      return;
+    } else {
+      this._renderSorting();
+      this._renderFilmSection();
+    }
+
     if (movieCount === 0) {
       this._renderNoFilms();
       return;
     }
-
-    this._renderSorting();
-    this._renderFilmSection();
 
     this._renderBaseFilmListFilmCards();
 
@@ -267,6 +280,7 @@ export default class MovieList {
 
     remove(this._sortingComponent);
     remove(this._showcaseSectionComponent);
+    remove(this._loadingComponent);
     remove(this._noFilmComponent);
     remove(this._showMoreButtonComponent);
 
@@ -366,6 +380,12 @@ export default class MovieList {
         break;
       case UpdateType.MAJOR:
         this._clearMovieShowcase({resetRenderedFilmCardsCount: true, resetSortType: true});
+        this._renderMovieShowcase();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._handleUserRankUpdate();
         this._renderMovieShowcase();
         break;
     }

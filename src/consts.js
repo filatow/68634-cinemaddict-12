@@ -51,6 +51,7 @@ export const UpdateType = {
   MINOR: `MINOR`,
   MINOR_AND_POPUP: `MINOR_AND_POPUP`,
   MAJOR: `MAJOR`,
+  INIT: `INIT`,
 };
 export const FilterType = {
   ALL: `all`,
